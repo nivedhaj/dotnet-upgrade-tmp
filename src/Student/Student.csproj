@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>14</LangVersion>
+    <RootNamespace>Student</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Marten" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="10.0.0" />
+    <PackageReference Include="autofac" Version="8.2.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Ct.Core\Ct.Core.csproj" />
+    <ProjectReference Include="..\Ct.Contracts\Ct.Contracts.csproj" />
+  </ItemGroup>
+</Project>
