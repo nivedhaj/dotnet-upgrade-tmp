@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json.Linq;
-using Marten;
+using ct._Core.Data;
 using Repo.Resource;
 using System;
 using System.Collections.Generic;
@@ -144,7 +144,7 @@ namespace ct._Core.Security
         /// DB session
         /// </summary>
         /// <returns></returns>
-        IDocumentSession Session { get; set; }
+        IPostgresSession Session { get; set; }
         /// <summary>
         /// Should Entity / Entities be persisted? Defaults to true
         /// </summary>
@@ -299,7 +299,7 @@ namespace ct._Core.Security
         /// DB Session
         /// </summary>
         /// <returns></returns>
-        public IDocumentSession Session { get; set; }
+        public IPostgresSession Session { get; set; }
         /// <summary>
         /// Defaults to true.If set to false, the entity should not be persisted in Db.
         /// The DB Laayer should check this value before persisting
@@ -345,7 +345,7 @@ namespace ct._Core.Security
             var _userId = jo.GetValue("UserId").ToString();
             var _sessionId = jo.GetValue("SessionId").ToString();
             var _scope = jo.GetValue("Scope").ToObject<List<string>>();
-            var _session = (IDocumentSession)payload?["Session"];
+            var _session = (IPostgresSession)payload?["Session"];
             var _shortName = jo.GetValue("ShortName").ToString();
             var _smsSenderId = jo.GetValue("SMSSenderId")?.ToString();
             var _topic = (string)payload?["Topic"];
@@ -485,7 +485,7 @@ namespace ct._Core.Security
     /// Ref: http://autofaccn.readthedocs.io/en/latest/faq/injecting-configured-parameters.html
     public class UserContextProvider : IUserContextProvider
     {
-        private readonly IDocumentSession _session;
+        private readonly IPostgresSession _session;
         private readonly IConfiguration _configuration;
         IHttpContextAccessor _httpContextAccessor;
         AppService _appService;
@@ -500,9 +500,9 @@ namespace ct._Core.Security
         /// <param name="httpContextAccessor"></param>
         /// <param name="configuration"></param>
         /// <param name="appService"></param>
-        public UserContextProvider(IDocumentStore store, IHttpContextAccessor httpContextAccessor, IConfiguration configuration, AppService appService)
+        public UserContextProvider(IPostgresSession session, IHttpContextAccessor httpContextAccessor, IConfiguration configuration, AppService appService)
         {
-            _session = store.LightweightSession(); // Marten on Postgres (was Raven OpenSession)
+            _session = session;
             _httpContextAccessor = httpContextAccessor;
             var _request = _httpContextAccessor.HttpContext.Request;
             _configuration = configuration;
@@ -543,7 +543,7 @@ namespace ct._Core.Security
             //use json path navigation 
             dynamic jo = JObject.Parse((string)dict["token"]);
             var _userId = jo.GetValue("UserId").ToString();
-            _session.Advanced.ExternalState.Add(new KeyValuePair<string, object>("UserId", _userId));
+            _session.UserId = _userId;
 
             dict["Session"] = _session;
             dict["QueryCollection"] = _httpContextAccessor.HttpContext.Request.Query;

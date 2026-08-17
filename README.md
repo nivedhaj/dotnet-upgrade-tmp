@@ -1,93 +1,88 @@
-# Ct.Campus — .NET 10 / C# 14 + PostgreSQL (Marten)
+# Ct.Campus — Student/Fees PostgreSQL + .NET 10 migration
 
-Full original **Student** module tree upgraded:
+This version removes the RavenDB dependency from the uploaded Campus Student module and moves persistence to PostgreSQL.
 
-- **Controllers** kept (`StudentController`, `ReportController`, `FeesController`, …)
-- **Views** kept (`Student/Views/StudentFeeSummary.cs`)
-- **Triggers** kept & rewritten (`Fees/Triggers/FeeSummaryEtl.cs` → Marten publish)
-- **Services / Cmd / Qry / DTOs / Resources** kept
-- **RavenDB** replaced with **Marten on PostgreSQL** (document model on Postgres)
-- Target framework **`net10.0`**, language **C# 14**
+## Target stack
 
-## Why Marten?
+- .NET 10
+- C# 14 (`LangVersion=14.0`)
+- PostgreSQL
+- Npgsql 10.0.3
+- Autofac 9.3.1 / Autofac.Extensions.DependencyInjection 11.0.2
+- ASP.NET Core 10
+- NLog 6.1.4
+- Swashbuckle 10.2.3
 
-Your code is document-oriented (sessions, `Store`/`Load`/`Query`, nested documents, view collections).  
-Marten stores documents as **PostgreSQL `jsonb`** and exposes an API close to Raven’s session model, so Controllers, Views, and most Cmd/Qry call sites can stay.
+## Database design
 
-## Structure (preserved)
+The migration uses a PostgreSQL-first read/write model:
 
-```
-src/
-  Ct.Host/          # executable host (.NET 10)
-  Ct.Core/          # shared security, middleware, compat shims
-  Ct.Contracts/
-  Student/
-    Controllers/
-    Views/          # StudentFeeSummary  ← VIEW
-    Triggers/       # README for trigger/view pattern
-    Repo/ Db/ Service/
-    StudentModule.cs
-  Fees/
-    Controllers/
-    Triggers/       # FeeSummaryEtl       ← TRIGGER (Postgres/Marten)
-    Repo/
-    FeesModule.cs
-```
+- `campus.documents` stores complex Campus aggregates as JSONB so the existing domain model can be migrated without losing nested Student/Course/IEP data.
+- `campus.fees_receivables` and `campus.opening_balances` are normalized relational tables.
+- PostgreSQL views replace RavenDB indexes:
+  - `v_student_inst_index`
+  - `v_student_coursewise_count`
+  - `v_inst_student_count`
+  - `v_attendance_event_index`
+  - `v_student_essentials_index`
+  - `v_ping_index`
+  - `v_student_fee_summary`
+- PostgreSQL triggers replace RavenDB ETL/audit hooks:
+  - audit timestamps/user IDs on writes
+  - fee-summary cache refresh after fee/opening-balance changes
 
-## Setup
+The SQL is in `Database/schema.sql`.
 
-1. PostgreSQL 14+ running.
-2. Create databases (or let Marten create schema objects):
+## Configuration
 
-```bash
-psql -U postgres -c "CREATE DATABASE campus_student;"
-psql -U postgres -c "CREATE DATABASE campus_fees;"
-```
-
-3. Connection strings in `src/Ct.Host/appsettings.Development.json`:
+Set:
 
 ```json
-"ConnectionStrings": {
-  "Student": "Host=localhost;Port=5432;Database=campus_student;Username=postgres;Password=postgres",
-  "Fees": "Host=localhost;Port=5432;Database=campus_fees;Username=postgres;Password=postgres"
+{
+  "Postgres": {
+    "ConnectionString": "Host=localhost;Port=5432;Database=campustrack;Username=campustrack;Password=CHANGE_ME",
+    "ApplySchemaOnStartup": true
+  }
 }
 ```
 
-4. Build & run:
+For production, run `Database/schema.sql` through your deployment/migration pipeline and set `ApplySchemaOnStartup` to `false`.
+
+## Compatibility layer
+
+`Ct.Core/Data/PostgresSession.cs` provides the small persistence abstraction needed to keep the existing Student command/query logic stable while removing RavenDB APIs.
+
+It supports:
+
+- `Query<T>()`
+- `Query<T,TIndex>()`
+- `Load<T>()`
+- `Load<T>(ids)`
+- `Store/StoreAsync`
+- `SaveChanges/SaveChangesAsync`
+- stream-style reads
+- the existing statistics/search/document-query patterns
+
+The important difference is that the database is now PostgreSQL; the old RavenDB client package and RavenDB index/ETL APIs are gone.
+
+## Fee summary
+
+The previous RavenDB ETL sketch has been replaced with PostgreSQL triggers:
+
+`fees_receivables/opening_balances -> trigger -> student_fee_summary_cache -> v_student_fee_summary`
+
+This makes the fee read model local to PostgreSQL and removes the cross-database Raven ETL dependency.
+
+## Build
+
+The environment used to prepare this migration does not contain the .NET SDK, so the package cannot be build-verified here.
+
+On a machine with the .NET 10 SDK:
 
 ```bash
-dotnet restore Ct.Campus.sln
-dotnet build Ct.Campus.sln
+dotnet restore
+dotnet build
 dotnet run --project src/Ct.Host
 ```
 
-## View + Trigger
-
-| Piece | File | Behavior |
-|-------|------|----------|
-| **View** | `Student/Views/StudentFeeSummary.cs` | Document in Student store; identity = `StudentId` |
-| **Trigger** | `Fees/Triggers/FeeSummaryEtl.cs` | `PublishAsync` upserts the view after Fees writes |
-
-Call from Fees after save:
-
-```csharp
-await FeeSummaryEtl.PublishAsync(studentStore, studentId, instId, receivable, paid, opening);
-```
-
-## What still needs attention
-
-1. **Raven map indexes** under `Repo/Db/Index/*` are now Result DTO holders. Configure Marten property indexes / computed indexes in `StudentModule.CreateStore` for hot filters (`InstId`, `EnrollmentStatus`, …).
-2. **`Advanced.Stream` / `ProjectInto`** use temporary **compat shims** in `Ct.Core/Compat/MartenRavenCompat.cs`. Prefer plain `.ToList()` over time.
-3. **`Query<T, TIndex>`** was rewritten to **`Query<T>`**. Some projections may need explicit `.Select(...)`.
-4. **Not fully compile-tested** in this environment (no full SDK restore of all transitive packages). Expect a few API fixes on first `dotnet build` (Marten version APIs, nullable, etc.).
-5. Wire **Fees** into the host when ready (uncomment project reference + `FeesModule.Register`).
-
-## Packages
-
-- Removed: `RavenDB.Client`
-- Added: `Marten` (PostgreSQL document DB)
-- Host: `net10.0`, Autofac still used for keyed module registration
-
-## Original Raven config
-
-`Raven:Urls` removed. Use `ConnectionStrings:Student` / `Fees` only.
+Before production rollout, validate the PostgreSQL schema against a copy of the existing Raven data and run the Student/Fees integration test suite.

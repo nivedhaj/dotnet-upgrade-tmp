@@ -6,7 +6,7 @@ namespace ct._Core.Repo.Resource
     {
         public string Service { get; set; }
         public string Message { get; set; }
-        public DateTime At { get; }
+        public DateTime At { get; set; }
         public Ping()
         {
             At = DateTime.UtcNow;

@@ -1,17 +1,16 @@
 using ct._Core.Repo.Resource;
 using Microsoft.Extensions.Configuration;
-using Marten;
-using Marten.Linq;
+using ct._Core.Data;
 using System;
 
 namespace ct._Core.Repo.Db.Command
 {
     public class PingCmd
     {
-        private readonly IDocumentSession _session;
+        private readonly IPostgresSession _session;
         private readonly IConfiguration _config;
 
-        public PingCmd(IDocumentSession session, IConfiguration config)
+        public PingCmd(IPostgresSession session, IConfiguration config)
         {
             _session = session;
             _config = config;

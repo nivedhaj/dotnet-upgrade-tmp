@@ -1,53 +1,24 @@
+using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using NLog.Web;
-using System;
-using System.Diagnostics;
-using System.IO;
 
-namespace Ct.Host
+namespace Ct.Host;
+
+public static class Program
 {
-    /// <summary>
-    /// .NET 10 host entry point. Still uses Startup + Autofac for compatibility
-    /// with existing StudentModule / FeesModule Register methods.
-    /// </summary>
-    public class Program
+    public static void Main(string[] args)
     {
-        public static void Main(string[] args)
-        {
-            Console.WriteLine(Process.GetCurrentProcess().Id);
-            var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
-            try
-            {
-                logger.Debug("init main");
-                CreateHostBuilder(args).Build().Run();
-            }
-            catch (Exception exception)
-            {
-                logger.Error(exception, "Stopped program because of exception");
-                throw;
-            }
-            finally
-            {
-                NLog.LogManager.Shutdown();
-            }
-        }
+        var builder = WebApplication.CreateBuilder(args);
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .UseServiceProviderFactory(new AutofacServiceProviderFactory())
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                })
-                .ConfigureLogging(logging =>
-                {
-                    logging.ClearProviders();
-                    logging.SetMinimumLevel(LogLevel.Trace);
-                })
-                .UseNLog();
+        builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+        builder.Host.UseNLog();
+
+        var startup = new Startup(builder.Configuration);
+        startup.ConfigureServices(builder.Services);
+        builder.Host.ConfigureContainer<ContainerBuilder>(startup.ConfigureContainer);
+
+        var app = builder.Build();
+        startup.Configure(app, app.Environment);
+        app.Run();
     }
 }

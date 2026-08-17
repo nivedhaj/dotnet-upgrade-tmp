@@ -4,8 +4,7 @@ using ct._Core.Repo.Resource;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
-using Marten;
-using Marten.Schema;
+using ct._Core.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,14 +20,12 @@ namespace ct._Core.Controllers
     public class _MonitorController : Controller
     {
         private readonly ILogger<_MonitorController> _logger;
-        private readonly IDocumentStore _store;
         private readonly PingCmd _pingCmd;
         private readonly PingQry _pingQry;
 
-        public _MonitorController(ILogger<_MonitorController> logger, IDocumentStore store, PingCmd pingCmd, PingQry pingQry)
+        public _MonitorController(ILogger<_MonitorController> logger, PingCmd pingCmd, PingQry pingQry)
         {
             _logger = logger;
-            _store = store;
             _pingCmd = pingCmd;
             _pingQry = pingQry;
         }
@@ -37,15 +34,6 @@ namespace ct._Core.Controllers
         public IActionResult ping()
         {
             return Json("pong");
-        }
-
-        // Post:: string -> HTTP_Status 201
-        [HttpPost("db/index")]
-        public void CreateIndexes()
-        {
-            // deploy all indexes 
-            var asm = typeof(Ping).Assembly;
-            IndexCreation.CreateIndexes(asm, _store);
         }
 
         [HttpGet("db/ping")]

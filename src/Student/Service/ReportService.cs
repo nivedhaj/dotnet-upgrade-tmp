@@ -10,9 +10,8 @@ using ct._Core.Repo.Resource;
 using ct._Core.Security;
 using ct._Core.Service;
 using ct._Core.Util;
-using Marten;
-using Marten.Linq;
-using Marten; using Marten.Linq;
+using ct._Core.Data;
+using ct._Core.Data;
 using Repo.Db.Index;
 using Repo.Db.Query;
 using Repo.Dto;
@@ -26,7 +25,7 @@ namespace ct.stu.Service
     public class ReportService
     {
         private readonly IUserContext _uc;
-        private readonly IDocumentSession _session;
+        private readonly IPostgresSession _session;
         private readonly StudentQry _studentQry;
         private readonly TemplateService template_service;
         private readonly GithubService github_service;
@@ -461,7 +460,7 @@ namespace ct.stu.Service
             Expression<Func<Student_Inst_Index.Result, bool>> filterByInst = o => o.InstId.Equals(inst_id);
             Expression<Func<Student_Inst_Index.Result, bool>> filterByActiveStudents = o => o.EnrollmentStatus == EnrollmentStatusEnum.Active;
             var qry = _session
-                            .Query<Student_Inst_Index.Result>()
+                            .Query<Student_Inst_Index.Result, Student_Inst_Index>()
                             .Where(filterByInst)
                             .Where(filterByActiveStudents)
                             .Where(o => o.CourseId.In(course_ids));
@@ -862,7 +861,7 @@ namespace ct.stu.Service
             var result = new List<CoursewiseStudentDto>();
 
             var qry = _session
-                            .Query<Student_Coursewise_Count.Result>()
+                            .Query<Student_Coursewise_Count.Result, Student_Coursewise_Count>()
                             .Where(o => o.InstId == inst_id);
 
             if (!string.IsNullOrEmpty(courseId) && (!courseId.Equals("all", StringComparison.InvariantCultureIgnoreCase)))
@@ -1331,7 +1330,7 @@ namespace ct.stu.Service
             Expression<Func<Student_Inst_Index.Result, bool>> filterByTCStudents = o => o.EnrollmentStatus == EnrollmentStatusEnum.TC;
             Expression<Func<Student_Inst_Index.Result, bool>> filterByCourses = o => o.CourseId.In(course_ids);
 
-            var qry = _session.Query<Student_Inst_Index.Result>();
+            var qry = _session.Query<Student_Inst_Index.Result, Student_Inst_Index>();
             qry = qry.Where(filterByInst);
             qry = qry.Where(filterByTCStudents);
             qry = course_ids != null && course_ids.Count > 0 ? qry.Where(filterByCourses) : qry;
