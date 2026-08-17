@@ -5,10 +5,8 @@ using ct._Core.Security;
 using ct._Core.Service;
 using ct._Core.Util;
 using Newtonsoft.Json;
-using Marten;
-using Marten.Linq;
-using Marten;
-using Marten.Linq;
+using ct._Core.Data;
+using ct._Core.Data;
 using Repo.Db.Index;
 using Repo.Dto;
 using Repo.Resource;
@@ -16,7 +14,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using Marten.Compat;
 
 namespace Repo.Db.Command
 {
@@ -25,7 +22,7 @@ namespace Repo.Db.Command
     /// </summary>
     public class StudentCmd
     {
-        private readonly IDocumentSession _session;
+        private readonly IPostgresSession _session;
         private readonly IUserContext _uc;
         private readonly RabbitMQService _rabbitMQService;
         private readonly IPolicyEngine _policyEngine;
@@ -916,7 +913,7 @@ namespace Repo.Db.Command
                 var yy = doa.Equals(DateTime.MinValue) ? client_dto.AcademicYearFrom.Value.ToString("yy") : doa.ToString("yy");
                 var course_prefix = _policyEngine.CoursePrefix(courseName);
                 var student_id_prefix = $"{yy}{course_prefix}";
-                var cur_id = _session.Query<Student_Inst_Index.Result>()
+                var cur_id = _session.Query<Student_Inst_Index.Result, Student_Inst_Index>()
                     .Where(o => o.InstId == inst_id)
                     .Where(o => o.StudentId.StartsWith(student_id_prefix))
                     .OrderByDescending(o => o.StudentId)
@@ -973,7 +970,7 @@ namespace Repo.Db.Command
                 var inst_id = _uc.InstId;
                 var client_dto = RedisCache.GetClientDto(inst_id);
                 var prefix = _policyEngine.AdmissionNoPrefix(client_dto.AcademicYearFrom.Value.Year.ToString(), client_dto.AcademicYearTo.Value.Year.ToString());
-                var cur_id = _session.Query<Student_Inst_Index.Result>()
+                var cur_id = _session.Query<Student_Inst_Index.Result, Student_Inst_Index>()
                                      .Where(o => o.InstId == inst_id)
                                      .Where(o => o.AdmissionNo.StartsWith(prefix))
                                      .OrderByDescending(o => o.AdmissionNo)
@@ -1065,7 +1062,7 @@ namespace Repo.Db.Command
             var result = new List<StudentContactDto>();
 
             //qry
-            var qry = _session.Query<Student_Inst_Index.Result>();
+            var qry = _session.Query<Student_Inst_Index.Result, Student_Inst_Index>();
 
             //filter
             Expression<Func<Student_Inst_Index.Result, bool>> filterByInst = o => o.InstId == inst_id;
@@ -1076,7 +1073,7 @@ namespace Repo.Db.Command
             qry = limitToCourses != null && limitToCourses.Count > 0 ? qry.Where(filterByCourses) : qry;
             qry = limitToStudents != null && limitToStudents.Count > 0 ? qry.Where(filterByStudents) : qry;
 
-            using (var enumerator = _session.Stream(qry.OfType<Student>()))
+            using (var enumerator = _session.Advanced.Stream(qry.OfType<Student>()))
             {
                 while (enumerator.MoveNext())
                 {
@@ -1100,11 +1097,11 @@ namespace Repo.Db.Command
             var predicates = new List<string>() { lucenePredicate, $"(InstId:{inst_id})", $"(EnrollmentStatus:{EnrollmentStatusEnum.Active})" };
             var predicate = string.Join(" AND ", predicates.Where(s => !string.IsNullOrEmpty(s)));
             var qry = _session.Advanced
-                            .Query<Student_Inst_Index.Result>()
+                            .DocumentQuery<Student_Inst_Index.Result, Student_Inst_Index>()
                             .WhereLucene("Name", predicate)
                             .OfType<Student>();
 
-            using (var enumerator = _session.Stream(qry))
+            using (var enumerator = _session.Advanced.Stream(qry))
             {
                 while (enumerator.MoveNext())
                 {
@@ -1237,13 +1234,13 @@ namespace Repo.Db.Command
         {
             if (instId == "") instId = _uc.InstId;
             var _dt = date.HasValue ? date.Value.Date : DateTime.Now.Date;
-            var qry = _session.Query<AttendanceEvent_IX.Result>()
+            var qry = _session.Query<AttendanceEvent_IX.Result, AttendanceEvent_IX>()
                             .Where(o => o.InstId.Equals(instId))
                             .Where(o => o.Date == _dt)
                             .OfType<AttendanceEvent>();
 
             var att_events = new List<AttendanceEvent>();
-            using (var enumerator = _session.Stream(qry))
+            using (var enumerator = _session.Advanced.Stream(qry))
             {
                 while (enumerator.MoveNext())
                 {
@@ -1284,11 +1281,11 @@ namespace Repo.Db.Command
 
             var predicate = string.Join(" AND ", predicates.Where(s => !string.IsNullOrEmpty(s)));
             var qry = _session.Advanced
-                            .Query<Student_Inst_Index.Result>()
+                            .DocumentQuery<Student_Inst_Index.Result, Student_Inst_Index>()
                             .WhereLucene("Name", predicate)
                             .OfType<Student>();
 
-            using (var enumerator = _session.Stream(qry))
+            using (var enumerator = _session.Advanced.Stream(qry))
             {
                 while (enumerator.MoveNext())
                 {
@@ -1322,11 +1319,11 @@ namespace Repo.Db.Command
             var predicates = new List<string>() { lucenePredicate, $"(InstId:{inst_id})", $"(EnrollmentStatus:{EnrollmentStatusEnum.Active})" };
             var predicate = string.Join(" AND ", predicates.Where(s => !string.IsNullOrEmpty(s)));
             var qry = _session.Advanced
-                            .Query<Student_Inst_Index.Result>()
+                            .DocumentQuery<Student_Inst_Index.Result, Student_Inst_Index>()
                             .WhereLucene("Name", predicate)
                             .OfType<Student>();
 
-            using (var enumerator = _session.Stream(qry))
+            using (var enumerator = _session.Advanced.Stream(qry))
             {
                 while (enumerator.MoveNext())
                 {
@@ -1367,13 +1364,13 @@ namespace Repo.Db.Command
         {
             if (instId == "") instId = _uc.InstId;
             var _dt = date.HasValue ? date.Value.Date : DateTime.Now.Date;
-            var qry = _session.Query<AttendanceEvent_IX.Result>()
+            var qry = _session.Query<AttendanceEvent_IX.Result, AttendanceEvent_IX>()
                             .Where(o => o.InstId.Equals(instId))
                             .Where(o => o.Date == _dt)
                             .OfType<AttendanceEvent>();
 
             var att_events = new List<AttendanceEvent>();
-            using (var enumerator = _session.Stream(qry))
+            using (var enumerator = _session.Advanced.Stream(qry))
             {
                 while (enumerator.MoveNext())
                 {
@@ -1744,7 +1741,7 @@ namespace Repo.Db.Command
         public StudentEssentials UpdateItemList(string studentId, string name, DateTime date, decimal amount)
         {
             var inst_id = _uc.InstId;
-            var essentials = _session.Query<Student_Essentials_IX.Result>()
+            var essentials = _session.Query<Student_Essentials_IX.Result, Student_Essentials_IX>()
                             .Where(o => o.StudentId.Equals(studentId))
                             .OfType<StudentEssentials>()
                             .FirstOrDefault();

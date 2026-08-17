@@ -1,27 +1,15 @@
-# Student triggers / views (Postgres + Marten)
+# PostgreSQL views and triggers
 
-## Pattern
+RavenDB indexes/ETL have been replaced with PostgreSQL views and triggers.
 
-| Piece | Location | Role |
-|-------|----------|------|
-| **View** | `Student/Views/StudentFeeSummary.cs` | Document type stored in Student DB; read-only for Student code |
-| **Trigger / publisher** | `Fees/Triggers/FeeSummaryEtl.cs` | After Fees writes, upserts `StudentFeeSummary` into Student store |
+- `campus.v_student_inst_index` replaces `Student_Inst_Index`.
+- `campus.v_student_coursewise_count` replaces `Student_Coursewise_Count`.
+- `campus.v_inst_student_count` replaces `Inst_Student_Count`.
+- `campus.v_attendance_event_index` replaces `AttendanceEvent_IX`.
+- `campus.v_student_essentials_index` replaces `Student_Essentials_IX`.
+- `campus.v_ping_index` replaces `Ping_Index`.
+- `campus.v_student_fee_summary` is the fee read model.
+- `trg_audit_documents` stamps created/modified audit fields.
+- `trg_refresh_student_fee_summary` refreshes the fee summary cache after fee writes.
 
-## Raven → Postgres change
-
-- **Before:** RavenDB ETL task (Fees DB → Student DB) configured in `FeeSummaryEtl.EnsureConfigured`.
-- **After:** `FeeSummaryEtl.PublishAsync` (application publish) or optional SQL TRIGGER. Marten stores both document types in PostgreSQL (`jsonb`).
-
-## How Student reads the view
-
-```csharp
-var summary = session.Load<StudentFeeSummary>(studentId);
-// or
-var list = session.Query<StudentFeeSummary>().Where(x => x.InstId == instId).ToList();
-```
-
-## Wiring
-
-1. `StudentModule` registers `StudentFeeSummary` with identity `StudentId`.
-2. `FeesCmd` (after save) resolves Student `IDocumentStore` and calls `FeeSummaryEtl.PublishAsync`.
-3. No Raven Studio ETL task is required.
+The SQL definitions live in `Database/schema.sql`.

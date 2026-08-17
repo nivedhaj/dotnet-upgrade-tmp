@@ -1,8 +1,7 @@
 using ct._Core.Repo.Db.Index;
 using ct._Core.Repo.Resource;
 using Microsoft.Extensions.Configuration;
-using Marten;
-using Marten.Linq;
+using ct._Core.Data;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -12,9 +11,9 @@ namespace ct._Core.Repo.Db.Query
     public class PingQry
     {
         private readonly IConfiguration _config;
-        private readonly IDocumentSession _session;
+        private readonly IPostgresSession _session;
 
-        public PingQry(IDocumentSession session, IConfiguration config)
+        public PingQry(IPostgresSession session, IConfiguration config)
         {
             _session = session;
             _config = config;
@@ -22,7 +21,7 @@ namespace ct._Core.Repo.Db.Query
         public IEnumerable<Ping> Get()
         {
             string serviceName = _config.GetSection("Service:Name").Value;
-            var qry = _session.Query<Ping>();
+            var qry = _session.Query<Ping, Ping_Index>();
             var result = qry
                     .Where(o => o.Service == serviceName)
                     .OrderByDescending(o => o.At)

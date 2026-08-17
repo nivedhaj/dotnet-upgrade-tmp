@@ -1,8 +1,7 @@
 using ct._Core.Security;
 using ct._Core.Util;
 using Fees.Repo.Resource;
-using Marten;
-using Marten.Linq;
+using ct._Core.Data;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -16,10 +15,10 @@ namespace Fees.Repo.Db.Command
     /// </summary>
     public class FeesCmd
     {
-        readonly IAsyncDocumentSession _session;
+        readonly IPostgresSession _session;
         readonly IUserContext _uc;
 
-        public FeesCmd(IUserContext uc, IAsyncDocumentSession session)
+        public FeesCmd(IUserContext uc, IPostgresSession session)
         {
             _uc = uc.Current();
             _session = session;

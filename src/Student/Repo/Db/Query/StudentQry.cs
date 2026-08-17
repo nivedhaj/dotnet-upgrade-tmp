@@ -3,10 +3,8 @@ using ct._Core.Repo.Dto;
 using ct._Core.Security;
 using ct._Core.Service;
 using ct._Core.Util;
-using Marten;
-using Marten.Linq;
-using Marten;
-using Marten.Linq;
+using ct._Core.Data;
+using ct._Core.Data;
 using Repo.Db.Index;
 using Repo.Dto;
 using Repo.Resource;
@@ -15,7 +13,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
-using Marten.Compat;
 
 namespace Repo.Db.Query
 {
@@ -24,7 +21,7 @@ namespace Repo.Db.Query
     /// </summary>
     public class StudentQry
     {
-        private readonly IDocumentSession _session;
+        private readonly IPostgresSession _session;
         private readonly IUserContext _uc;
         private readonly RabbitMQService _rmqService;
         private readonly IPolicyEngine _policyEngine;
@@ -75,17 +72,16 @@ namespace Repo.Db.Query
             var applyFilterBySection = !string.IsNullOrEmpty(section) && !section.Equals("all", StringComparison.CurrentCultureIgnoreCase);
 
             var qry = _session
-                        .Query<Student_Inst_Index.Result>()
+                        .Query<Student_Inst_Index.Result, Student_Inst_Index>()
                         .Where(filterByInst)
                         .Where(filterByActiveStudents);
             qry = applyFilterByCourse ? qry.Where(filterByCourse) : qry;
             qry = applyFilterBySection ? qry.Where(filterBySection) : qry;
 
             qry = qry
-                    .OrderBy(o => o.CourseSortIndex)
-                    .ProjectInto<Student_Inst_Index.Result>();
+                    .OrderBy(o => o.CourseSortIndex);
 
-            using (var enumerator = _session.Stream(qry))
+            using (var enumerator = _session.Advanced.Stream(qry))
             {
                 while (enumerator.MoveNext())
                 {
@@ -185,7 +181,7 @@ namespace Repo.Db.Query
                 int total = 0;
                 foreach (var (courseId, section) in pairs)
                 {
-                    var queryable = _session.Query<T>()
+                    var queryable = _session.Query<T, Student_Inst_Index>()
                         .Where(filterByInstId)
                         .Where(x => x.CourseId == courseId && x.SectionName == section);
                     queryable = activeStudentsOnly ? queryable.Where(studentsAreActive) : queryable;
@@ -222,8 +218,8 @@ namespace Repo.Db.Query
             }
             else
             {
-                // Standard RavenQueryable path
-                var queryable = _session.Query<T>();
+                // Standard PostgreSQL projection path
+                var queryable = _session.Query<T, Student_Inst_Index>();
                 if (!string.IsNullOrEmpty(_uc.Search))
                 {
                     var searchTerm = _uc.Search.Contains(" ") ? $"\"{_uc.Search}\"" : _uc.Search;
@@ -301,7 +297,7 @@ namespace Repo.Db.Query
             var result = new List<string>();
 
             //qry
-            var qry = _session.Query<Student_Inst_Index.Result>();
+            var qry = _session.Query<Student_Inst_Index.Result, Student_Inst_Index>();
 
             //filter
             Expression<Func<Student_Inst_Index.Result, bool>> filterByInst = o => o.InstId == inst_id;
@@ -311,7 +307,7 @@ namespace Repo.Db.Query
             qry = activeOnly ? qry.Where(filterByStudentStatus) : qry;
             qry = limitToCourses != null && limitToCourses.Count > 0 ? qry.Where(filterByCourses) : qry;
 
-            using (var enumerator = _session.Stream(qry.OfType<Student>()))
+            using (var enumerator = _session.Advanced.Stream(qry.OfType<Student>()))
             {
                 while (enumerator.MoveNext())
                 {
@@ -399,13 +395,13 @@ namespace Repo.Db.Query
             }
             if (instId == "") instId = _uc.InstId;
             var _dt = date.HasValue ? date.Value.Date : DateTime.Now.Date;
-            var qry = _session.Query<AttendanceEvent_IX.Result>()
+            var qry = _session.Query<AttendanceEvent_IX.Result, AttendanceEvent_IX>()
                             .Where(o => o.InstId.Equals(instId))
                             .Where(o => o.Date == _dt)
                             .OfType<AttendanceEvent>();
 
             var att_events = new List<AttendanceEvent>();
-            using (var enumerator = _session.Stream(qry))
+            using (var enumerator = _session.Advanced.Stream(qry))
             {
                 while (enumerator.MoveNext())
                 {
@@ -538,14 +534,14 @@ namespace Repo.Db.Query
             var instId = _uc.InstId;
             var tag_list = tags.ToLower().Split(',');
             var students = new List<GetStudentDto>();
-            var qry = _session.Query<Student_Inst_Index.Result>()
+            var qry = _session.Query<Student_Inst_Index.Result, Student_Inst_Index>()
                                 .Where(o => o.InstId.Equals(instId))
                                 .Where(o => o.EnrollmentStatus == EnrollmentStatusEnum.Active)
                                 .Where(o => o.Tags.Contains(tags))
                                 .OfType<Student>();
 
 
-            using (var enumerator = _session.Stream(qry))
+            using (var enumerator = _session.Advanced.Stream(qry))
             {
                 while (enumerator.MoveNext())
                 {
@@ -576,14 +572,13 @@ namespace Repo.Db.Query
 
             //qry
             var qry = _session
-                            .Query<Student_Inst_Index.Result>()
+                            .Query<Student_Inst_Index.Result, Student_Inst_Index>()
                             .Where(o => o.InstId == inst_id)
-                            .Where(filterByEnrollmentStatus)
-                            .ProjectInto<Student_Inst_Index.Result>();
+                            .Where(filterByEnrollmentStatus);
 
 
             var stus = new List<Student_Inst_Index.Result>();
-            using (var enumerator = _session.Stream(qry))
+            using (var enumerator = _session.Advanced.Stream(qry))
             {
                 while (enumerator.MoveNext())
                 {
@@ -642,10 +637,10 @@ namespace Repo.Db.Query
         internal List<Student_Inst_Index.Result> GetDtoWithData()
         {
             var instId = _uc.InstId;
-            var qry = _session.Query<Student_Inst_Index.Result>()
+            var qry = _session.Query<Student_Inst_Index.Result, Student_Inst_Index>()
                                 .Where(o => o.InstId.Equals(instId));
             var students = new List<Student_Inst_Index.Result>();
-            using (var enumerator = _session.Stream(qry))
+            using (var enumerator = _session.Advanced.Stream(qry))
             {
                 while (enumerator.MoveNext())
                 {
@@ -716,14 +711,14 @@ namespace Repo.Db.Query
             Expression<Func<Student_Inst_Index.Result, bool>> filterByInst = o => o.InstId == instId;
             Expression<Func<Student_Inst_Index.Result, bool>> filterByStudents = o => o.Id.In(studentIds);
 
-            var qry = _session.Query<Student_Inst_Index.Result>();
+            var qry = _session.Query<Student_Inst_Index.Result, Student_Inst_Index>();
             qry = qry.Where(filterByInst);
             qry = studentIds == null || studentIds.Count == 0 ? qry : qry.Where(filterByStudents);
             var stu_qry = qry.OfType<Student>();
 
             var students = new List<StudentFlatDto>();
             var courses = RedisCache.GetCourseDto(instId);
-            using (var enumerator = _session.Stream(stu_qry))
+            using (var enumerator = _session.Advanced.Stream(stu_qry))
             {
                 while (enumerator.MoveNext())
                 {
@@ -785,7 +780,7 @@ namespace Repo.Db.Query
                     if (stu_profiles != null && stu_profiles.Count > 0) return stu_profiles;
                 }
                 var qry = _session
-                            .Query<Student_Inst_Index.Result>()
+                            .Query<Student_Inst_Index.Result, Student_Inst_Index>()
                             .Where(filterByInst)
                             .Where(filterByActiveStudents)
                             .Where(o => o.VirtualId == userEmail || o.EmailList.Contains(userEmail))
@@ -835,7 +830,7 @@ namespace Repo.Db.Query
             var result = new List<CoursewiseStudentDto>();
 
             var qry = _session
-                            .Query<Student_Coursewise_Count.Result>()
+                            .Query<Student_Coursewise_Count.Result, Student_Coursewise_Count>()
                             .Where(o => o.InstId == inst_id);
 
             if (!string.IsNullOrEmpty(courseId) && (!courseId.Equals("all", StringComparison.InvariantCultureIgnoreCase)))
@@ -889,7 +884,7 @@ namespace Repo.Db.Query
             var inst_id = _uc.InstId;
             if (!_uc.BoundByInst) throw new NotInScopeException(inst_id);
             var qry = _session
-                              .Query<AttendanceEvent_IX.Result>()
+                              .Query<AttendanceEvent_IX.Result, AttendanceEvent_IX>()
                               .Where(o => o.InstId == inst_id)
                               .ToList();
 
@@ -913,7 +908,7 @@ namespace Repo.Db.Query
         {
             if (instituteIds == null) throw new ArgumentNullException("Institute id list is empty");
             var qry = _session
-                            .Query<Inst_Student_Count.Result>()
+                            .Query<Inst_Student_Count.Result, Inst_Student_Count>()
                             .Where(o => o.InstId.In(instituteIds));
 
             var students = qry.ToList();
@@ -939,7 +934,7 @@ namespace Repo.Db.Query
         {
             if (instituteIds == null) throw new ArgumentNullException("Institute id list is empty");
             var qry = _session
-                            .Query<Inst_Student_Count.Result>()
+                            .Query<Inst_Student_Count.Result, Inst_Student_Count>()
                             .Where(o => o.InstId.In(instituteIds));
 
             var students = qry.ToList();
@@ -1031,11 +1026,11 @@ namespace Repo.Db.Query
 
             var predicate = string.Join(" AND ", predicates.Where(s => !string.IsNullOrEmpty(s)));
             var qry = _session.Advanced
-                            .Query<Student_Inst_Index.Result>()
+                            .DocumentQuery<Student_Inst_Index.Result, Student_Inst_Index>()
                             .WhereLucene("Name", predicate)
                             .OfType<Student>();
 
-            using (var enumerator = _session.Stream(qry))
+            using (var enumerator = _session.Advanced.Stream(qry))
             {
                 while (enumerator.MoveNext())
                 {
@@ -1081,7 +1076,7 @@ namespace Repo.Db.Query
         public bool StudentEssentialsExists(string studentId)
         {
             var recordExists = _uc.Session
-                                    .Query<StudentEssentials>()
+                                    .Query<StudentEssentials, Student_Essentials_IX>()
                                     .Where(o => o.StudentId == studentId)
                                     .FirstOrDefault();
             return recordExists == null ? false : true;
@@ -1090,7 +1085,7 @@ namespace Repo.Db.Query
         public StudentEssentialsDto GetStudentEssentials(string studentId)
         {
             var essentials = _uc.Session
-                                   .Query<StudentEssentials>()
+                                   .Query<StudentEssentials, Student_Essentials_IX>()
                                    .Where(o => o.StudentId == studentId)
                                    .FirstOrDefault();
 

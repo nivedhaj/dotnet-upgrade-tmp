@@ -19,7 +19,7 @@ namespace Fees.Repo.Resource
     ///
     /// Previously this was a sub-document embedded inside Student.FeesReceivable,
     /// living in the same shared "btl" database as everything else. It is now a
-    /// first-class Marten/Postgres document in the Fees module's own database, keyed by
+    /// first-class PostgreSQL document in the Fees module's own database, keyed by
     /// StudentId so the Fees module can still query "all receivables for a student"
     /// without ever touching the Student database.
     /// </summary>
