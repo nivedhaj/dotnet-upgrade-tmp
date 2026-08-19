@@ -1,0 +1,49 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: campustrack-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: campustrack
+      POSTGRES_USER: campustrack
+      POSTGRES_PASSWORD: CHANGE_ME
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # Runs automatically on FIRST container start (empty data dir only)
+      - ./Database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U campustrack -d campustrack"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    networks:
+      - campustrack-net
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: campustrack-app
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      Postgres__ConnectionString: "Host=postgres;Port=5432;Database=campustrack;Username=campustrack;Password=CHANGE_ME"
+      Postgres__ApplySchemaOnStartup: "false"
+    ports:
+      - "8080:8080"
+    networks:
+      - campustrack-net
+
+networks:
+  campustrack-net:
+    driver: bridge
+
+volumes:
+  pgdata:
