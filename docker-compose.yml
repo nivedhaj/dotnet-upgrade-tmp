@@ -6,10 +6,10 @@ services:
     environment:
       POSTGRES_DB: campustrack
       POSTGRES_USER: campustrack
-      POSTGRES_PASSWORD: CHANGE_ME
+      POSTGRES_PASSWORD: campustrack
     volumes:
       - pgdata:/var/lib/postgresql/data
-      # Runs automatically on FIRST container start (empty data dir only)
+      # Runs automatically only when the PostgreSQL data directory is empty.
       - ./Database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
     ports:
       - "5432:5432"
@@ -34,7 +34,8 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:8080
-      Postgres__ConnectionString: "Host=postgres;Port=5432;Database=campustrack;Username=campustrack;Password=CHANGE_ME"
+      Postgres__ConnectionString: "Host=postgres;Port=5432;Database=campustrack;Username=campustrack;Password=campustrack"
+      # PostgreSQL initializes schema.sql. Do not run the same schema again at app startup.
       Postgres__ApplySchemaOnStartup: "false"
     ports:
       - "8080:8080"
