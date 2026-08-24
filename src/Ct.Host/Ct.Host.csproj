@@ -25,6 +25,7 @@
     <Content Include="..\Database\schema.sql">
       <Link>Database\schema.sql</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
   </ItemGroup>
 </Project>
