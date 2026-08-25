@@ -1,0 +1,18 @@
+{
+  "module": "ct.stu",
+  "targetFramework": "net10.0",
+  "languageVersion": "C# 14",
+  "database": "PostgreSQL",
+  "ravendbPackageDependency": false,
+  "architecture": "modular single-project",
+  "modules": ["Students", "Reports", "Shared"],
+  "controllersIncluded": ["StudentController", "ReportController", "_MonitorController"],
+  "postgresNativeQueries": ["StudentQueries.GetRecentStudentsAsync", "StudentQueries.GetByIdAsync"],
+  "postgresNativeCommands": ["StudentCommands.UpsertDocumentAsync"],
+  "compatibilityLayer": "PostgresDocumentSession",
+  "schemaIncluded": true,
+  "indexesIncluded": true,
+  "viewsIncluded": true,
+  "buildVerification": "not-run: .NET SDK is not installed in the generation environment",
+  "nextMigrationStep": "Move remaining StudentQry/StudentCmd operations from compatibility session to PostgreSQL-native module queries/commands."
+}
