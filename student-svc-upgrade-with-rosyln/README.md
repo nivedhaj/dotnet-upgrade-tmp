@@ -1,119 +1,72 @@
-# Student Service – RavenDB → PostgreSQL POC
+# ct.stu -> .NET 10 / C# 14 / PostgreSQL migration workspace
 
-This POC is based on the uploaded `ct.stu` source. The old application is .NET Core 3.1 + RavenDB. The POC demonstrates a migration target of **.NET 10 / C# 14 + PostgreSQL**, while using **Roslyn as a migration bridge**.
+This workspace preserves the complete original `ct.stu` application under `Legacy/` and adds a runnable .NET 10 PostgreSQL POC plus a Roslyn migration analyzer.
 
-## What is demonstrated
+## Architecture
 
-- `StudentService.Api`
-  - ASP.NET Core / .NET 10 Web API
-  - EF Core 10 + Npgsql
-  - PostgreSQL relational model
-  - `students` + `student_enrollments`
-  - JSONB for intentionally flexible/legacy fields
-  - Create, get, search, enable/disable, promote
-- `StudentMigration.Roslyn`
-  - Roslyn-based source analyzer
-  - Scans old RavenDB code for:
-    - `IDocumentSession`
-    - `Load<T>()`
-    - `Store()`
-    - `SaveChanges()`
-    - `Query<T>()`
-    - `Statistics()`
-    - Raven `Search()`
-  - Produces a migration report and maps Raven operations to the new repository/service pattern.
-- `LegacySample/StudentCmd.cs`
-  - Small representative extract based on the uploaded Raven implementation.
+Legacy .NET Core 3.1 + RavenDB -> Roslyn analysis -> .NET 10/C# 14 + PostgreSQL
 
-## Important architecture point
+Roslyn is used as a **migration/code-analysis bridge**, not as a runtime database adapter.
 
-Roslyn is **not used as a database adapter**. It is the bridge for the **code migration**:
+## Run with Docker
+
+Requirements: Docker and Docker Compose.
+
+```bash
+docker compose up --build
+```
+
+API: http://localhost:8080
+Swagger: http://localhost:8080/swagger
+PostgreSQL: localhost:5432
+
+To reset the database during POC work:
+
+```bash
+docker compose down -v
+docker compose up --build
+```
+
+## Run Roslyn analyzer
+
+From the repository root:
+
+```bash
+dotnet run --project src/StudentMigration.Roslyn -- Legacy/ct.stu/Repo/Db/Command/StudentCmd.cs
+```
+
+Or analyze the entire legacy project:
+
+```bash
+dotnet run --project src/StudentMigration.Roslyn -- Legacy/ct.stu
+```
+
+The analyzer reports RavenDB APIs, source locations, and suggested PostgreSQL/EF Core replacements.
+
+## Scope
+
+The PostgreSQL API is an intentionally small vertical slice around Student. It is the migration foundation, not a claim that every 110 legacy C# files has been mechanically rewritten. The full original source is retained so each Raven operation can be migrated and regression-tested incrementally.
+
+## Roslyn migration report output
+
+The Roslyn analyzer supports an optional `--output` directory. It writes both a machine-readable JSON report and a human-readable Markdown report.
+
+```bash
+dotnet run --project src/StudentMigration.Roslyn -- Legacy/ct.stu --output MigrationOutput
+```
+
+The generated files are:
 
 ```text
-.NET Core 3.1 + RavenDB
-        |
-        | Roslyn analysis / classification
-        v
-Migration map + compatibility seams
-        |
-        v
-.NET 10 + C# 14 + PostgreSQL
+MigrationOutput/
+├── migration-report.json
+└── migration-report.md
 ```
 
-For a gradual migration, the existing controller can first call an interface such as `IStudentRepository`. The old Raven implementation and the new PostgreSQL implementation can both implement that interface. Roslyn helps identify and classify the old code so the replacement can be done method-by-method.
+The console still prints a summary and the detected migration points. The output directory is created automatically if it does not exist.
 
-## PostgreSQL schema
-
-The POC uses normalized tables:
-
-```text
-students
-  1
-  |
-  +----< student_enrollments
-```
-
-Flexible fields such as domicile/documents/IEP can initially be kept as JSONB. They can later be normalized when their query/reporting requirements become clear.
-
-## Run
-
-1. Start PostgreSQL:
+For a single file:
 
 ```bash
-docker compose -f docker-compose.yml up -d
+dotnet run --project src/StudentMigration.Roslyn -- Legacy/ct.stu/Repo/Db/Command/StudentCmd.cs --output MigrationOutput
 ```
-
-2. Run the API:
-
-```bash
-dotnet restore
-dotnet run --project src/StudentService.Api
-```
-
-3. Run the Roslyn bridge against the legacy source:
-
-```bash
-dotnet run --project src/StudentMigration.Roslyn -- LegacySample/StudentCmd.cs
-```
-
-4. API examples:
-
-```bash
-curl http://localhost:5080/api/students
-curl "http://localhost:5080/api/students?search=Ravi&instituteId=INST-001"
-
-curl -X POST http://localhost:5080/api/students \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Ravi Kumar",
-    "dob": "2012-05-10",
-    "email": "ravi@example.com",
-    "mobile": "9876543210",
-    "instituteId": "INST-001",
-    "courseId": "COURSE-1",
-    "courseName": "VI",
-    "termName": "2026-27",
-    "sectionName": "A",
-    "branch": "",
-    "studentId": "STU-001",
-    "admissionNumber": "ADM-001",
-    "applicationNumber": "APP-001",
-    "doa": "2026-06-01"
-  }'
-```
-
-## Migration sequence recommended for the real application
-
-1. Freeze the Raven document contract.
-2. Use Roslyn to inventory Raven calls and classify them as read/write/index/search.
-3. Introduce repository interfaces in the existing application.
-4. Keep Raven implementation behind the interface.
-5. Add PostgreSQL implementation.
-6. Run Raven and PostgreSQL in parallel for selected operations.
-7. Backfill existing students into PostgreSQL.
-8. Compare Raven/PostgreSQL results for important queries.
-9. Switch reads first.
-10. Switch writes.
-11. Retire Raven indexes and then Raven persistence.
-
-The POC intentionally does **not** attempt to automatically translate every Raven LINQ expression to SQL. Raven indexes and `Search()` calls often encode query behavior that must be designed explicitly in PostgreSQL.

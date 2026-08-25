@@ -1,0 +1,8 @@
+{
+  "runtimeOptions": {
+    "additionalProbingPaths": [
+      "/home/nivedha/.dotnet/store/|arch|/|tfm|",
+      "/home/nivedha/.nuget/packages"
+    ]
+  }
+}
