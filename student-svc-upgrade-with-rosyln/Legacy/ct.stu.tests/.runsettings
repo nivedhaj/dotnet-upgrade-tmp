@@ -1,0 +1,5 @@
+﻿<RunSettings>
+  <TestRunParameters>  
+    <Parameter name="foo" value="bar" />  
+  </TestRunParameters>  
+</RunSettings>

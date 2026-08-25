@@ -1,0 +1,40 @@
+# Use Dockerfile.Base for common dependencies
+FROM ct-dotnet-base:latest AS build
+
+WORKDIR /stu-svc
+
+# copy csproj and restore as distinct layers
+COPY ./stu/ct.stu/ct.stu.csproj .
+
+RUN dotnet restore
+ARG CT_ENV
+ENV CT_ENV=$CT_ENV
+
+ARG CT_ENV=Test
+
+ENV ASPNETCORE_ENVIRONMENT ${CT_ENV}
+
+# copy everything else and build app
+COPY ./stu/ct.stu .
+
+RUN dotnet publish -c Release -o /app
+
+# Build runtime image
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1
+
+WORKDIR /ct-stu
+
+COPY --from=build /app .
+
+
+#COPY ./ct_sc.pfx .
+ARG CT_ENV
+ENV CT_ENV=$CT_ENV
+
+ARG CT_ENV=Test
+
+ENV ASPNETCORE_ENVIRONMENT ${CT_ENV}
+
+ENTRYPOINT ["dotnet", "ct.stu.dll"]
+
+EXPOSE 5190

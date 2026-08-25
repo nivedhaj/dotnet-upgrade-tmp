@@ -1,0 +1,393 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <UserSecretsId>User-Secret-ID</UserSecretsId>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.5" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.1.5" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.6.1" />
+    <PackageReference Include="MSTest.TestAdapter" Version="2.1.2" />
+    <PackageReference Include="MSTest.TestFramework" Version="2.1.2" />
+    <PackageReference Include="RavenDB.Client" Version="4.2.103" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ct.stu\ct.stu.csproj" />
+    <None Include="appsettings.json" CopyToOutputDirectory="Always" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="EmailSppu\sppu_180623_parent_mentor_meet\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmailSppu\sppu_180730_tt\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmailSppu\sppu_180803_tt\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmailSppu\sppu_180705_tt\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmailSppu\sppu_180705_tt\sppu-monthly-test-july-puc-1.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmailSppu\sppu_180705_tt\sppu-monthly-test-july-puc-2.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmailSppu\sppu_180730_tt\Time table from 30-7-18 to 04-08-18.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmailSppu\sppu_180803_tt\Master-Timetable.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180806_KG_II_Programme_Jul\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180806_KG_II_Programme_Jul\JULY - Programme Sheet-18-19.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180802_I_Sem_II_Unit_Test_TimeTable_LP\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180711_School_timings_hp_on_14_Jul_2018\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180730_1to7_Timings\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180726_KG12_Shlokas\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180725_1to7_PT\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180725_67_Inspire\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180713_1to7_Scholarship\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180711_School_timings_on_14_Jul_2018\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180618_School_timings_on_20_6_2018\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180718_KG_I_Programme_Jul\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180625_KG_I_Programme_June\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180625_KG_I_Programme_June\K.G.I  June month programme sheet and portion.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180626_I_SemI_Unit_Test_TimeTable_HP\180626_I_SemI_Unit_Test_TimeTable_HP.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180626_I_SemI_Unit_Test_TimeTable_HP\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180626_I_SemI_Unit_Test_TimeTable_LP\180626_I_SemI_Unit_Test_TimeTable_LP.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180626_I_SemI_Unit_Test_TimeTable_LP\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180627_Talent_Search\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180627_Guidelines_To_Parents\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180627_Guidelines_To_Parents\Guidelines to parents 2018 - 19.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180627_Talent_Search\Talent Search Programme - 2018-19.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180702_67_Scholarship\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180702_67_Scholarship\DepartmentOfPosts-Scholarship.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180711_KG_II_Story_Of_the_Month\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180706_KG_II_Programme_June\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180706_KG_II_Programme_June\JUNE 2018-KG II.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180711_KG_II_Story_Of_the_Month\Shepherd Boys and the Fox.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180718_KG_I_Programme_Jul\K.G I  July month programme sheet and  portions.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180726_KG12_Shlokas\Shlokas.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180802_I_Sem_II_Unit_Test_TimeTable_LP\I Semester II Unit Test 2018-19.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180802_I_SemII_Unit_Test_TimeTable\I-Sem-II-Unit-Test.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180802_I_SemII_Unit_Test_TimeTable\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180803_567_I_SemII_Unit_Test_Timetable\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180803_567_I_SemII_Unit_Test_Timetable\I-Sem-II-Unit-Test-HP.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180808_Deworming\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180808_DPT\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180813_Whatsapp\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmailSppu\sppu_180813_quarterly_tt_pu_I\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmailSppu\sppu_180813_quarterly_tt_pu_I\quarterly_tt_I_PU.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmailSppu\sppu_180813_quarterly_tt_pu_II\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmailSppu\sppu_180813_quarterly_tt_pu_II\quarterly_tt_II_PU.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180820_KG_I_Programme_Aug\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180820_KG_I_Programme_Aug\KGI-August-Programme-Sheet-Portion.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180829_Diamond_Jubilee\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180829_Teachers_Day\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180911_KG_II_Programme_Aug\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180911_KG_II_Programme_Aug\August-PS-KGII-18-19.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180911_KG_II_GK_Sheet_First_Term\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180911_KG_II_GK_Sheet_First_Term\KG-II-GK-Sheet-First-Term.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180911_5to7_Timings\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180917_Moharrum\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180917_I_Semester_Exam_Timetable_LP\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180917_I_Semester_Exam_Timetable_LP\180917_I_Semester_Exam_Timetable_LP.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180917_I_Semester_Exam_Timetable_HP\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180917_I_Semester_Exam_Timetable_HP\180917_I_Semester_Exam_Timetable_HP.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmailSppu\sppu_180918_midterm_tt_pu_I\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmailSppu\sppu_180918_midterm_tt_pu_I\midterm_tt_I_PU.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmailSppu\sppu_180918_midterm_tt_pu_II\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmailSppu\sppu_180918_midterm_tt_pu_II\midterm_tt_II_PU.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180918_KG_I_Programme_Aug_Sep\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180918_KG_I_Programme_Aug_Sep\KGI-August-September-Programme-Sheet.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180918_KG_I_Appraisal_I_TT\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180918_KG_I_Appraisal_I_TT\KGI_Appraisal_I_TT.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180918_KG_II_Appraisal_I_TT\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\180918_KG_II_Appraisal_I_TT\KGII_Appraisal_I_TT.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmailSppu\sppu_181105_prepI_tt_pu_II\Prep_I_tt_II_PU.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmailSppu\sppu_181105_prepII_tt_pu_II\Prep_II_tt_II_PU.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\181001_Annual_Sports_LP\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\181001_Annual_Sports_HP\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\181003_School_Timings_HP\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\181003_School_Timings_HP_Correction\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\181004_School_Timings_Friday_HP\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\181025_II_PT_Meeting\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\181029_School_Fee\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmailSppu\sppu_181105_prepI_tt_pu_II\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmailSppu\sppu_181105_prepII_tt_pu_II\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\181113_Childrens_Day\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\181115_CD_Timings_LP\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\181115_CD_Timings_HP\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\181115_CD_Timings_Nursery\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\181121_KG_I_Programme_Nov\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\181121_KG_I_Programme_Nov\K.G. I  Oct - Nov programme sheet and portion.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\181129_II_Semester_I_Unit_Test_TimeTable_LP\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\181129_II_Semester_I_Unit_Test_Timetable_LP\181129_II_Semester_I_Unit_Test_Timetable_LP.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\181129_II_Semester_I_Unit_Test_TimeTable_HP\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\181129_II_Semester_I_Unit_Test_Timetable_HP\181129_II_Semester_I_Unit_Test_Timetable_HP.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\181204_Test_Email\content.html">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\181206_Test_Email_Attachment\content.html">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\181206_Test_Email_Attachment\Test_Email_Attachment.pdf">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmailSppu\sppu_181204_prepIII_tt_pu_II\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmailSppu\sppu_181204_prepIII_tt_pu_II\Prep_III_tt_II_PU.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\181210_KG_II_Programme_Sep\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\181210_KG_II_Programme_Sep\Programme_Sheet_Sept_Nov_KGII.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\181218_Winter_Vacation\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\181221_Nur_7\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email\181219_Nur_Sports_Day\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmailSppu\sppu_181220_prep_tt_pu_I\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmailSppu\sppu_181220_prep_tt_pu_I\Prep_tt_I_PU.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email/190104_KG_I_Programme_Dec\KG I December and January Programme Sheet.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+     <None Update="Email/190104_KG_I_Programme_Dec\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+     <None Update="Email/190107_Holiday_Declaration\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email/190109_School_Timings_Nursery\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email/190109_School_Timings_I_to_VII\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email/190114_II_Semester_II_Unit_Test_LP\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email/190114_II_Semester_II_Unit_Test_LP\II Semester II Unit Test 2018-19.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email/190116_II_Semester_II_Unit_Test_HP\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email/190116_II_Semester_II_Unit_Test_HP\II Semester II Unit Test Timetable.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email/190117_Golden_Jubilee_Celebrations_III_IV\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+     <None Update="Email/190117_Golden_Jubilee_Celebrations_Nursery\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email/190117_Golden_Jubilee_Celebrations_V_to_VII\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email/190118_Instructions_To_Parents\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+     <None Update="Email/190121_Holiday_Declaration\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+     <None Update="EmailSppu/sppu_190122_practical_exam_tt_pu_II\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmailSppu/sppu_190122_practical_exam_tt_pu_II\Batch List and Timetable II PU Practical Examination.pdf">
+    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Email/190124_School_Timings_V_to_VII\content.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>
