@@ -1,0 +1,3 @@
+using Ct.Stu.Application; using Microsoft.EntityFrameworkCore; using Microsoft.Extensions.Configuration; using Microsoft.Extensions.DependencyInjection; using Ct.Stu.Infrastructure.Persistence;
+namespace Ct.Stu.Infrastructure;
+public static class DependencyInjection { public static IServiceCollection AddStuInfrastructure(this IServiceCollection services,IConfiguration config){services.AddDbContext<StuDbContext>(o=>o.UseNpgsql(config.GetConnectionString("Postgres"),n=>n.MigrationsHistoryTable("__EFMigrationsHistory","stu")));services.AddScoped<StudentService>();services.AddScoped<IStudentQueries>(sp=>sp.GetRequiredService<StudentService>());services.AddScoped<IStudentCommands>(sp=>sp.GetRequiredService<StudentService>());return services;} }

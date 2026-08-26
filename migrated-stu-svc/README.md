@@ -1,76 +1,50 @@
-# ct.stu — Full .NET 10 / C# 14 / PostgreSQL migration
+# ct.stu — .NET 10 / C# 14 / EF Core / PostgreSQL modular migration
 
-This package is the full ct.stu application source migrated from the supplied legacy `ct.stu` source.
+This solution uses a shared `_Core` project. Individual services live below `src/Services` and **do not contain their own Core folder**.
 
-## Included
-
-- All original `Controllers/` endpoints, including `StudentController` and `ReportController`.
-- All original student commands in `Repo/Db/Command/StudentCmd.cs`.
-- All original student queries in `Repo/Db/Query/StudentQry.cs`.
-- Report service and report controller behavior.
-- DTOs and resource/domain classes.
-- Policy engines, middleware, security/user-context plumbing and integrations.
-- PostgreSQL persistence replacing RavenDB.
-- PostgreSQL JSONB document storage so the existing aggregate model is preserved without losing nested student data.
-- PostgreSQL views and indexes for students, enrollments and attendance.
-- Replacements for the Raven indexes used by ct.stu:
-  - `Student_Inst_Index`
-  - `Student_Coursewise_Count`
-  - `Inst_Student_Count`
-  - `AttendanceEvent_IX`
-  - `Student_Essentials_IX`
-  - `Ping_Index`
-- Docker Compose with PostgreSQL.
-- Database schema under `Database/schema.sql`.
-
-## RavenDB status
-
-There is no RavenDB client package, RavenDB connection, Raven `IDocumentSession`, or Raven index deployment code in the migrated runtime.
-
-The legacy query/index semantics are implemented through `ct._Core.Persistence.PostgresDocumentSession` and PostgreSQL-backed document/index projections.
-
-## Run
-
-```bash
-docker compose up --build
-```
-
-The API is exposed on port `5190` and PostgreSQL on `5432`.
-
-Swagger:
+## Structure
 
 ```text
-http://localhost:5190/api/stu/swagger
+src/
+├── _Core/
+│   └── Ct.Core/
+└── Services/
+    └── Ct.Stu/
+        ├── Ct.Stu.Domain/
+        ├── Ct.Stu.Application/
+        ├── Ct.Stu.Infrastructure/
+        └── Ct.Stu.Api/
 ```
 
-## Configuration
+## Data architecture
 
-Set:
+- EF Core 10 + Npgsql
+- PostgreSQL tables are managed by EF migrations.
+- Complex read models are exposed through PostgreSQL views/materialized views.
+- PostgreSQL trigger/function SQL is versioned with the EF migration.
+- `student_fee_summary_view` is the canonical live view.
+- `student_fee_summary_mv` is an optional read-optimized materialized projection and is refreshed after fee transaction statements.
+- Legacy RavenDB indexes are represented as EF/LINQ queries or PostgreSQL indexes/views where that is a better relational fit.
+- JSONB is retained for legacy enrollment/contacts fields during the migration so data is not destructively flattened.
 
-```text
-ConnectionStrings__Postgres=Host=postgres;Port=5432;Database=ctstu;Username=ctstu;Password=ctstu
-```
-
-For local non-Docker execution, use `Host=localhost`.
-
-## Database
-
-The application automatically runs the idempotent PostgreSQL schema initializer at startup. The same SQL is available in `Database/schema.sql`.
-
-The schema uses a JSONB aggregate/document table because the legacy ct.stu model contains deeply nested objects, arrays and polymorphic aggregates. Relational metadata and targeted PostgreSQL indexes are maintained alongside the JSONB payload.
-
-## Important migration note
-
-The source migration is complete at the application-code level: controllers, commands, queries, reports and supporting services are present. Because this execution environment does not contain the .NET 10 SDK, the archive has not been compiled or integration-tested here. Run the following on a machine with the .NET 10 SDK and NuGet access before production cutover:
+## Commands
 
 ```bash
 dotnet restore
-dotnet build -c Release
-dotnet test -c Release
+dotnet build
+
+dotnet test
+
+dotnet run --project src/Services/Ct.Stu/Ct.Stu.Api
 ```
 
-Then run endpoint regression tests against a PostgreSQL database populated from the Raven export.
+For an existing database, generate/apply migrations with:
 
-## Data migration
+```bash
+dotnet ef migrations add InitialPostgres --project src/Services/Ct.Stu/Ct.Stu.Infrastructure --startup-project src/Services/Ct.Stu/Ct.Stu.Api --output-dir Persistence/Migrations
+dotnet ef database update --project src/Services/Ct.Stu/Ct.Stu.Infrastructure --startup-project src/Services/Ct.Stu/Ct.Stu.Api
+```
 
-The application schema is ready for imported aggregates. A Raven export/import step must map each legacy document into `ct_documents(document_type,id,owner_id,parent_id,created_on,modified_on,data)` and then reconcile document counts and business-level totals before cutover.
+## Important migration note
+
+`MigrationOutput.zip` was used as the Roslyn migration-analysis reference. It reports 110 scanned files and 526 detected migration points, including RavenDB `Load`, `Store`, `SaveChanges`, and `Query` usage in the shared core and student command/query paths. The original Roslyn report is included under `migration-analysis/`.
