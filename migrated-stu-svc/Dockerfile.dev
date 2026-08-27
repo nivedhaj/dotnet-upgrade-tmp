@@ -1,0 +1,12 @@
+FROM mcr.microsoft.com/dotnet/sdk:10.0
+WORKDIR /app
+
+COPY ct.csproj ./
+RUN dotnet restore ./ct.csproj
+
+COPY . ./
+
+ENV ASPNETCORE_URLS=http://+:5000
+EXPOSE 5000
+
+ENTRYPOINT ["dotnet", "run", "--project", "ct.csproj", "--urls", "http://0.0.0.0:5000"]
