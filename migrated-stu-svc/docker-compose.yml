@@ -3,11 +3,15 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+
     ports:
       - "5000:5000"
+
     environment:
       ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:5000
       ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=ct;Username=postgres;Password=postgres
+
     depends_on:
       postgres:
         condition: service_healthy
@@ -18,10 +22,13 @@ services:
       POSTGRES_DB: ct
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+
     ports:
       - "5432:5432"
+
     volumes:
       - ct-postgres-data:/var/lib/postgresql/data
+
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d ct"]
       interval: 5s
