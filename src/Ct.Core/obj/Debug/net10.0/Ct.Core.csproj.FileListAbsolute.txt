@@ -1,0 +1,6 @@
+/home/nivedha/Documents/github/dotnet-upgrade-tmp/src/Ct.Core/obj/Debug/net10.0/Ct.Core.csproj.AssemblyReference.cache
+/home/nivedha/Documents/github/dotnet-upgrade-tmp/src/Ct.Core/obj/Debug/net10.0/Ct.Core.GeneratedMSBuildEditorConfig.editorconfig
+/home/nivedha/Documents/github/dotnet-upgrade-tmp/src/Ct.Core/obj/Debug/net10.0/Ct.Core.AssemblyInfoInputs.cache
+/home/nivedha/Documents/github/dotnet-upgrade-tmp/src/Ct.Core/obj/Debug/net10.0/Ct.Core.AssemblyInfo.cs
+/home/nivedha/Documents/github/dotnet-upgrade-tmp/src/Ct.Core/obj/Debug/net10.0/Ct.Core.csproj.CoreCompileInputs.cache
+/home/nivedha/Documents/github/dotnet-upgrade-tmp/src/Ct.Core/obj/Debug/net10.0/Ct.Core.sourcelink.json

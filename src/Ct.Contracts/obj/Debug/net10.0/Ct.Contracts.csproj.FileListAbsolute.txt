@@ -1,0 +1,12 @@
+/home/nivedha/Documents/github/dotnet-upgrade-tmp/src/Ct.Contracts/bin/Debug/net10.0/Ct.Contracts.deps.json
+/home/nivedha/Documents/github/dotnet-upgrade-tmp/src/Ct.Contracts/bin/Debug/net10.0/Ct.Contracts.dll
+/home/nivedha/Documents/github/dotnet-upgrade-tmp/src/Ct.Contracts/bin/Debug/net10.0/Ct.Contracts.pdb
+/home/nivedha/Documents/github/dotnet-upgrade-tmp/src/Ct.Contracts/obj/Debug/net10.0/Ct.Contracts.GeneratedMSBuildEditorConfig.editorconfig
+/home/nivedha/Documents/github/dotnet-upgrade-tmp/src/Ct.Contracts/obj/Debug/net10.0/Ct.Contracts.AssemblyInfoInputs.cache
+/home/nivedha/Documents/github/dotnet-upgrade-tmp/src/Ct.Contracts/obj/Debug/net10.0/Ct.Contracts.AssemblyInfo.cs
+/home/nivedha/Documents/github/dotnet-upgrade-tmp/src/Ct.Contracts/obj/Debug/net10.0/Ct.Contracts.csproj.CoreCompileInputs.cache
+/home/nivedha/Documents/github/dotnet-upgrade-tmp/src/Ct.Contracts/obj/Debug/net10.0/Ct.Contracts.sourcelink.json
+/home/nivedha/Documents/github/dotnet-upgrade-tmp/src/Ct.Contracts/obj/Debug/net10.0/Ct.Contracts.dll
+/home/nivedha/Documents/github/dotnet-upgrade-tmp/src/Ct.Contracts/obj/Debug/net10.0/refint/Ct.Contracts.dll
+/home/nivedha/Documents/github/dotnet-upgrade-tmp/src/Ct.Contracts/obj/Debug/net10.0/Ct.Contracts.pdb
+/home/nivedha/Documents/github/dotnet-upgrade-tmp/src/Ct.Contracts/obj/Debug/net10.0/ref/Ct.Contracts.dll
