@@ -1,3 +1,0 @@
-using Ct.Stu.Domain; using Microsoft.EntityFrameworkCore; using Microsoft.EntityFrameworkCore.Metadata.Builders;
-namespace Ct.Stu.Infrastructure.Persistence.Configurations;
-public sealed class FeeTransactionConfiguration : IEntityTypeConfiguration<FeeTransaction>{public void Configure(EntityTypeBuilder<FeeTransaction>b){b.ToTable("fee_transaction");b.HasKey(x=>x.Id);b.Property(x=>x.TxNo).HasMaxLength(100).IsRequired();b.Property(x=>x.Amount).HasPrecision(14,2);b.Property(x=>x.InstallmentsPaid).HasColumnName("installments_paid").HasColumnType("jsonb");b.HasIndex(x=>new{x.StudentId,x.TxDate});b.HasIndex(x=>x.TxNo).IsUnique();b.HasOne(x=>x.Student).WithMany().HasForeignKey(x=>x.StudentId).OnDelete(DeleteBehavior.Restrict);}}

@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-dotnet restore
-dotnet build --configuration Release
+
+dotnet restore src/ct.csproj
+dotnet build src/ct.csproj --configuration Release
 dotnet test --configuration Release
