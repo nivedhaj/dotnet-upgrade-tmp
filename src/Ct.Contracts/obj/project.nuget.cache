@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "lwFyWTSmgPU=",
+  "dgSpecHash": "lRIE9tRCyf4=",
   "success": true,
-  "projectFilePath": "/home/nivedha/Documents/github/dotnet-upgrade-tmp/src/Ct.Contracts/Ct.Contracts.csproj",
+  "projectFilePath": "/home/runner/work/dotnet-upgrade-tmp/dotnet-upgrade-tmp/src/Ct.Contracts/Ct.Contracts.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }
