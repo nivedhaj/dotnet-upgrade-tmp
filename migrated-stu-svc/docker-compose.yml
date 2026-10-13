@@ -1,39 +1,35 @@
 services:
-  ct:
-    build:
-      context: .
-      dockerfile: Dockerfile
-
-    ports:
-      - "5000:5000"
-
-    environment:
-      ASPNETCORE_ENVIRONMENT: Production
-      ASPNETCORE_URLS: http://+:5000
-      ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=ct;Username=postgres;Password=postgres
-
-    depends_on:
-      postgres:
-        condition: service_healthy
-
   postgres:
     image: postgres:17
+    container_name: ct-postgres
     environment:
       POSTGRES_DB: ct
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-
+      POSTGRES_USER: ct
+      POSTGRES_PASSWORD: ct_dev_password
     ports:
       - "5432:5432"
-
     volumes:
-      - ct-postgres-data:/var/lib/postgresql/data
-
+      - ct_postgres_data:/var/lib/postgresql/data
+      - ./database:/docker-entrypoint-initdb.d:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d ct"]
+      test: ["CMD-SHELL", "pg_isready -U ct -d ct"]
       interval: 5s
       timeout: 5s
       retries: 10
 
+  ct:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ct-app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__Postgres: "Host=postgres;Port=5432;Database=ct;Username=ct;Password=ct_dev_password"
+    ports:
+      - "8080:8080"
+
 volumes:
-  ct-postgres-data:
+  ct_postgres_data:

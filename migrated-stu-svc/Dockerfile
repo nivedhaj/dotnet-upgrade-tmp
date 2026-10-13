@@ -1,23 +1,19 @@
-FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+# syntax=docker/dockerfile:1
 
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
-COPY src/ct.csproj ./
-
+COPY ct.csproj ./
 RUN dotnet restore ct.csproj
 
-COPY src/ ./
-
-RUN dotnet publish ct.csproj \
-    -c Release \
-    -o /app/publish
+COPY . .
+RUN dotnet publish ct.csproj -c Release -o /app/publish --no-restore
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
-
 WORKDIR /app
+ENV ASPNETCORE_URLS=http://+:8080
+EXPOSE 8080
 
 COPY --from=build /app/publish .
 
-EXPOSE 5000
-
-ENTRYPOINT ["dotnet", "Ct.dll"]
+ENTRYPOINT ["dotnet", "ct.dll"]
