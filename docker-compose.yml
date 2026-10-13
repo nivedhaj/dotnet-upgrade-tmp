@@ -1,50 +1,32 @@
 services:
   postgres:
-    image: postgres:16-alpine
-    container_name: campustrack-postgres
-    restart: unless-stopped
+    image: postgres:17
     environment:
-      POSTGRES_DB: campustrack
-      POSTGRES_USER: campustrack
-      POSTGRES_PASSWORD: campustrack
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-      # Runs automatically only when the PostgreSQL data directory is empty.
-      - ./Database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      POSTGRES_USER: ct
+      POSTGRES_PASSWORD: ct_dev_password
+      POSTGRES_DB: ct_modular
     ports:
       - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U campustrack -d campustrack"]
+      test: ["CMD-SHELL", "pg_isready -U ct -d ct_modular"]
       interval: 5s
       timeout: 5s
-      retries: 10
-      start_period: 10s
-    networks:
-      - campustrack-net
+      retries: 5
 
-  app:
+  api:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: campustrack-app
-    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Postgres: "Host=postgres;Port=5432;Database=ct_modular;Username=ct;Password=ct_dev_password"
     depends_on:
       postgres:
         condition: service_healthy
-    environment:
-      ASPNETCORE_ENVIRONMENT: Development
-      ASPNETCORE_URLS: http://+:8080
-      Postgres__ConnectionString: "Host=postgres;Port=5432;Database=campustrack;Username=campustrack;Password=campustrack"
-      # PostgreSQL initializes schema.sql. Do not run the same schema again at app startup.
-      Postgres__ApplySchemaOnStartup: "false"
-    ports:
-      - "8080:8080"
-    networks:
-      - campustrack-net
-
-networks:
-  campustrack-net:
-    driver: bridge
 
 volumes:
   pgdata:

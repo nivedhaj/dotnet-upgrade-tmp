@@ -1,88 +1,80 @@
-# Ct.Campus — Student/Fees PostgreSQL + .NET 10 migration
+# CT Modular Platform
 
-This version removes the RavenDB dependency from the uploaded Campus Student module and moves persistence to PostgreSQL.
+A **modular structured .NET 10 + PostgreSQL application** that combines the previously independent migration modules into one cohesive solution.
 
-## Target stack
+## Modules
 
-- .NET 10
-- C# 14 (`LangVersion=14.0`)
-- PostgreSQL
-- Npgsql 10.0.3
-- Autofac 9.3.1 / Autofac.Extensions.DependencyInjection 11.0.2
-- ASP.NET Core 10
-- NLog 6.1.4
-- Swashbuckle 10.2.3
+| Module       | Original package                        | Route / schema      | Content status |
+|--------------|-----------------------------------------|---------------------|----------------|
+| **Ct.Fee**   | ct-fee-dotnet10-postgres-production     | `/api/fee/*`        | Full (Domain, App, Infra, Controllers) |
+| **Ct.Stu**   | ct-stu-migration                        | Students / `ct`     | Full Admissions vertical (Person, Student, Enrollment, Course) |
+| **Ct.Acad**  | ct.acad.net10-migration                 | `/api/acad/*`       | Ping module + infrastructure + consolidated AcadModule |
+| **Ct.Arte**  | ct-arte-migration-dotnet10-postgres     | Artefacts           | Full (Artefact domain, repository, service, DbContext) |
+| **Ct.Connect**| ct.connect.pg-migration                | Connect             | Full (Email/SMS/Topic domain, Cmd/Qry, DbContext) |
+| **Ct.Library**| ct-library-postgres-migration          | Materials (Marten)  | Full (event-sourced Material, Marten, projections, queries) |
 
-## Database design
+## Architecture
 
-The migration uses a PostgreSQL-first read/write model:
-
-- `campus.documents` stores complex Campus aggregates as JSONB so the existing domain model can be migrated without losing nested Student/Course/IEP data.
-- `campus.fees_receivables` and `campus.opening_balances` are normalized relational tables.
-- PostgreSQL views replace RavenDB indexes:
-  - `v_student_inst_index`
-  - `v_student_coursewise_count`
-  - `v_inst_student_count`
-  - `v_attendance_event_index`
-  - `v_student_essentials_index`
-  - `v_ping_index`
-  - `v_student_fee_summary`
-- PostgreSQL triggers replace RavenDB ETL/audit hooks:
-  - audit timestamps/user IDs on writes
-  - fee-summary cache refresh after fee/opening-balance changes
-
-The SQL is in `Database/schema.sql`.
-
-## Configuration
-
-Set:
-
-```json
-{
-  "Postgres": {
-    "ConnectionString": "Host=localhost;Port=5432;Database=campustrack;Username=campustrack;Password=CHANGE_ME",
-    "ApplySchemaOnStartup": true
-  }
-}
+```
+CtModularApp/
+├── Ct.Modular.sln
+├── Dockerfile
+├── docker-compose.yml
+├── README.md
+└── src/
+    ├── Ct.Host/                 # Composition root
+    ├── Ct.Shared/               # IUserContext, AuditableEntity, extensions
+    └── Modules/
+        ├── Ct.Fee/
+        ├── Ct.Stu/              # Core + Modules/Student (Admissions)
+        ├── Ct.Acad/             # Application, Controllers, Domain, Infrastructure, _Core
+        ├── Ct.Arte/
+        ├── Ct.Connect/
+        └── Ct.Library/          # Domain, Handlers, Infrastructure (Marten), Queries, ReadModels
 ```
 
-For production, run `Database/schema.sql` through your deployment/migration pipeline and set `ApplySchemaOnStartup` to `false`.
+### Design principles
 
-## Compatibility layer
+1. **Modular monolith** – single deployable host, clear module boundaries.
+2. **Shared kernel** (`Ct.Shared`) – common abstractions where useful.
+3. **Module registration** – each module exposes `AddXxxModule` + optional `MapXxxEndpoints`.
+4. **Independent persistence** – each module owns its DbContext / Marten store and schema.
+5. **Header-based tenant/user context** (`X-Owner-Id`, `X-User-Id`, …).
+6. **Stack**: .NET 10, C# 14, EF Core 10, Npgsql, Marten (Library).
 
-`Ct.Core/Data/PostgresSession.cs` provides the small persistence abstraction needed to keep the existing Student command/query logic stable while removing RavenDB APIs.
-
-It supports:
-
-- `Query<T>()`
-- `Query<T,TIndex>()`
-- `Load<T>()`
-- `Load<T>(ids)`
-- `Store/StoreAsync`
-- `SaveChanges/SaveChangesAsync`
-- stream-style reads
-- the existing statistics/search/document-query patterns
-
-The important difference is that the database is now PostgreSQL; the old RavenDB client package and RavenDB index/ETL APIs are gone.
-
-## Fee summary
-
-The previous RavenDB ETL sketch has been replaced with PostgreSQL triggers:
-
-`fees_receivables/opening_balances -> trigger -> student_fee_summary_cache -> v_student_fee_summary`
-
-This makes the fee read model local to PostgreSQL and removes the cross-database Raven ETL dependency.
-
-## Build
-
-The environment used to prepare this migration does not contain the .NET SDK, so the package cannot be build-verified here.
-
-On a machine with the .NET 10 SDK:
+## Run
 
 ```bash
+# Requires .NET 10 SDK + Docker
+cd CtModularApp
 dotnet restore
 dotnet build
+docker compose up -d postgres   # or full stack
 dotnet run --project src/Ct.Host
 ```
 
-Before production rollout, validate the PostgreSQL schema against a copy of the existing Raven data and run the Student/Fees integration test suite.
+- Swagger: `/swagger`
+- Health: `/health`
+
+Every API call should include tenant/user headers where required:
+
+```text
+X-Owner-Id: <guid>
+X-User-Id: <user-id>
+```
+
+## Notes
+
+- **Fee** and **Arte** use EF Core + PostgreSQL with their own DbContexts.
+- **Stu** uses a single `CtDbContext` with schema `ct` and the Admissions module.
+- **Acad** uses schema `acad` and a Ping vertical; a large consolidated `AcadModule.Consolidated.cs` is also present for reference.
+- **Connect** uses `ConnectDbContext` (Email / SMS / Topic).
+- **Library** uses **Marten** for event-sourced Material aggregates and projections.
+- Controllers are auto-discovered by the host’s `MapControllers()`.
+
+## Next steps (optional)
+
+- Unify user-context interfaces onto `Ct.Shared.Abstractions.IUserContext`.
+- Add integration / golden tests per module.
+- Feature flags via `Modules:Xxx:Enabled`.
+- Production Marten migrations instead of `AutoCreate.All`.
