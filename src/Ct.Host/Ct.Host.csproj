@@ -16,6 +16,10 @@
     <ProjectReference Include="..\Modules\Ct.Stu\Ct.Stu.csproj" />
     <ProjectReference Include="..\Modules\Ct.Gr\Ct.Gr.csproj" />
     <ProjectReference Include="..\Modules\Ct.Staff\Ct.Staff.csproj" />
+    <ProjectReference Include="..\Modules\Ct.Scheduler\Ct.Scheduler.csproj" />
+    <ProjectReference Include="..\Modules\Ct.Asset\Ct.Asset.csproj" />
+    <ProjectReference Include="..\Modules\Ct.Accounting\Ct.Accounting.csproj" />
+    <ProjectReference Include="..\Modules\Ct.Admission\Ct.Admission.csproj" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.0" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
