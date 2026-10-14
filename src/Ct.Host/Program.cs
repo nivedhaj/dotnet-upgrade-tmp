@@ -4,6 +4,10 @@ using Ct.Fee;
 using Ct.Acad;
 using Ct.Arte;
 using Ct.Staff;
+using Ct.Scheduler;
+using Ct.Asset;
+using Ct.Accounting;
+using Ct.Admission;
 using Ct.Connect;
 using Ct.Library;
 using Ct.Stu;
@@ -22,6 +26,10 @@ builder.Services.AddConnectModule(builder.Configuration);
 builder.Services.AddLibraryModule(builder.Configuration);
 builder.Services.AddStuModule(builder.Configuration);
 builder.Services.AddStaffModule(builder.Configuration);
+builder.Services.AddSchedulerModule(builder.Configuration);
+builder.Services.AddAssetModule(builder.Configuration);
+builder.Services.AddAccountingModule(builder.Configuration);
+builder.Services.AddAdmissionModule(builder.Configuration);
 builder.Services.AddGrModule(builder.Configuration);
 
 // Controllers from all module assemblies
@@ -35,6 +43,10 @@ var moduleAssemblies = new[]
     typeof(Ct.Stu.StuModule).Assembly,
     typeof(Ct.Gr.GrModule).Assembly,
     typeof(Ct.Staff.StaffModule).Assembly,
+    typeof(Ct.Scheduler.SchedulerModule).Assembly,
+    typeof(Ct.Asset.AssetModule).Assembly,
+    typeof(Ct.Accounting.AccountingModule).Assembly,
+    typeof(Ct.Admission.AdmissionModule).Assembly,
 };
 
 builder.Services.AddControllers()
@@ -45,7 +57,11 @@ builder.Services.AddControllers()
     .AddApplicationPart(typeof(Ct.Library.LibraryModule).Assembly)
     .AddApplicationPart(typeof(Ct.Stu.StuModule).Assembly)
     .AddApplicationPart(typeof(Ct.Gr.GrModule).Assembly)
-    .AddApplicationPart(typeof(Ct.Staff.StaffModule).Assembly);
+    .AddApplicationPart(typeof(Ct.Staff.StaffModule).Assembly)
+    .AddApplicationPart(typeof(Ct.Scheduler.SchedulerModule).Assembly)
+    .AddApplicationPart(typeof(Ct.Asset.AssetModule).Assembly)
+    .AddApplicationPart(typeof(Ct.Accounting.AccountingModule).Assembly)
+    .AddApplicationPart(typeof(Ct.Admission.AdmissionModule).Assembly);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -54,7 +70,7 @@ builder.Services.AddSwaggerGen(c =>
     {
         Title = "CT Modular Platform",
         Version = "v1",
-        Description = "Combined modular .NET 10 + PostgreSQL application (Fee, Stu, Staff, Acad, Arte, Connect, Library, Gr)"
+        Description = "Combined modular .NET 10 + PostgreSQL application (Fee, Stu, Staff, Scheduler, Asset, Accounting, Admission, Acad, Arte, Connect, Library, Gr)"
     });
 });
 builder.Services.AddHealthChecks();
@@ -78,6 +94,10 @@ app.MapConnectEndpoints();
 app.MapLibraryEndpoints();
 app.MapStuEndpoints();
 app.MapStaffEndpoints();
+app.MapSchedulerEndpoints();
+app.MapAssetEndpoints();
+app.MapAccountingEndpoints();
+app.MapAdmissionEndpoints();
 app.MapGrEndpoints();
 
 app.Run();
