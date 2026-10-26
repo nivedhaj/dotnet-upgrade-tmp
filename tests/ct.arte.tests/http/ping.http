@@ -1,0 +1,4 @@
+### Health / smoke (host-level – adjust if you expose /ping)
+GET http://localhost:5000/health
+GET http://localhost:5000/api/arte/artefact?take=1
+X-Owner-Id: test-owner-0001

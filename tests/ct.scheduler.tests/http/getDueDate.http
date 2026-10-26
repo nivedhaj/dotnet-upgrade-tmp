@@ -1,0 +1,10 @@
+@host = https://localhost:5001
+@owner = sched-owner-1
+
+### Library due date
+GET {{host}}/api/scheduler/due-date?start=2026-10-26&workingDays=14
+X-Owner-Id: {{owner}}
+
+### Next working days
+GET {{host}}/api/scheduler/working-days?start=2026-10-26&count=5
+X-Owner-Id: {{owner}}

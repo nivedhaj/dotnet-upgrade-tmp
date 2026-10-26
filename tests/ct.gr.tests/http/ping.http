@@ -1,0 +1,6 @@
+### Health / smoke
+@host = https://localhost:5001
+
+GET {{host}}/api/gr/receipts?page=1&pageSize=1
+X-Owner-Id: default
+X-User-Id: ping

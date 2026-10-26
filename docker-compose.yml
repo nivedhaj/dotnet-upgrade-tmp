@@ -1,6 +1,7 @@
 services:
   postgres:
-    image: postgres:17
+    image: postgres:16-alpine
+    container_name: ct-modular-postgres
     environment:
       POSTGRES_USER: ct
       POSTGRES_PASSWORD: ct_dev_password
@@ -8,25 +9,13 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - ct_pg_data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ct -d ct_modular"]
       interval: 5s
       timeout: 5s
-      retries: 5
-
-  api:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
-    environment:
-      ASPNETCORE_ENVIRONMENT: Development
-      ConnectionStrings__Postgres: "Host=postgres;Port=5432;Database=ct_modular;Username=ct;Password=ct_dev_password"
-    depends_on:
-      postgres:
-        condition: service_healthy
+      retries: 10
 
 volumes:
-  pgdata:
+  ct_pg_data:

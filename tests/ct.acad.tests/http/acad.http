@@ -1,0 +1,86 @@
+### Ct.Acad – latest API surface (net10 / EF Core)
+@base = http://localhost:5000
+@owner = test-owner-acad-0001
+@user = test-user-acad-0001
+
+### Courses
+GET {{base}}/api/acad/course
+X-Owner-Id: {{owner}}
+
+###
+POST {{base}}/api/acad/course
+Content-Type: application/json
+X-Owner-Id: {{owner}}
+X-User-Id: {{user}}
+
+{ "name": "B.Sc Computer Science", "branch": "Science", "eduLevel": "UG", "seatsAvailable": 60 }
+
+### Exams
+GET {{base}}/api/acad/exam
+X-Owner-Id: {{owner}}
+
+###
+POST {{base}}/api/acad/exam
+Content-Type: application/json
+X-Owner-Id: {{owner}}
+
+{ "name": "Mid Term", "courseName": "B.Sc", "termName": "Sem 1" }
+
+###
+POST {{base}}/api/acad/exam/enable
+Content-Type: application/json
+X-Owner-Id: {{owner}}
+
+{ "id": "{{examId}}" }
+
+### Assessments
+GET {{base}}/api/acad/assessment
+X-Owner-Id: {{owner}}
+
+###
+POST {{base}}/api/acad/assessment
+Content-Type: application/json
+X-Owner-Id: {{owner}}
+
+{ "title": "Unit Test 1", "subject": "Maths", "durationMinutes": 45, "totalMarks": 50 }
+
+###
+POST {{base}}/api/acad/assessment/publish
+Content-Type: application/json
+X-Owner-Id: {{owner}}
+
+{ "id": "{{assessmentId}}" }
+
+### Attendance
+POST {{base}}/api/acad/attendance
+Content-Type: application/json
+X-Owner-Id: {{owner}}
+
+{ "date": "2026-01-15", "courseId": "c1", "courseName": "Std 10", "section": "A", "absenteeStudentIds": ["S1","S2"] }
+
+### Grading
+GET {{base}}/api/acad/grading
+X-Owner-Id: {{owner}}
+
+### LMS
+POST {{base}}/api/acad/lms/question
+Content-Type: application/json
+X-Owner-Id: {{owner}}
+
+{ "text": "2+2=?", "options": ["3","4","5"], "answer": "4", "tags": ["math"] }
+
+### Calendar
+GET {{base}}/api/acad/calendar
+X-Owner-Id: {{owner}}
+
+### TT Planner
+GET {{base}}/api/acad/ttplanner
+X-Owner-Id: {{owner}}
+
+### Reports
+GET {{base}}/api/acad/report/courses
+X-Owner-Id: {{owner}}
+
+### Anon
+GET {{base}}/api/acad/anon/assessment/publishedAssessments
+X-Owner-Id: {{owner}}

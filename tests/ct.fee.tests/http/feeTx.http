@@ -1,0 +1,34 @@
+### Fee transaction API samples
+@host = https://localhost:5001
+@owner = 0c250000-50bf-11e7-89e2-1cbdb9e7fd04
+
+### Create transaction
+POST {{host}}/api/fee/transactions
+X-Owner-Id: {{owner}}
+X-User-Id: tester
+Content-Type: application/json
+
+{
+  "txNo": "TX-001",
+  "txDate": "2026-10-26T10:00:00Z",
+  "studentId": "stu-001",
+  "paymentMode": "Cash",
+  "isOpeningBalanceAdjusted": false,
+  "refNo": "REF-001",
+  "receivedInAccount": "Cash",
+  "paidBy": "Parent",
+  "installmentsPaid": [
+    { "feeId": "FEE_GUID", "no": 1, "amount": 5000 }
+  ],
+  "finesPaid": [],
+  "discounts": [],
+  "adjustments": []
+}
+
+### List transactions for student
+GET {{host}}/api/fee/transactions?studentId=stu-001
+X-Owner-Id: {{owner}}
+
+### Fees to be paid
+GET {{host}}/api/fee/transactions/feesToBePaid?studentId=stu-001
+X-Owner-Id: {{owner}}

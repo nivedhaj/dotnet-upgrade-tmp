@@ -1,0 +1,3 @@
+@host = https://localhost:5001
+GET {{host}}/api/scheduler/calendar
+X-Owner-Id: default

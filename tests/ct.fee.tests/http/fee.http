@@ -1,0 +1,36 @@
+### Fee definition API samples
+@host = https://localhost:5001
+@owner = 0c250000-50bf-11e7-89e2-1cbdb9e7fd04
+
+### List fees
+GET {{host}}/api/fee
+X-Owner-Id: {{owner}}
+X-User-Id: tester
+
+### Create fee
+POST {{host}}/api/fee
+X-Owner-Id: {{owner}}
+X-User-Id: tester
+Content-Type: application/json
+
+{
+  "name": "Tuition Test",
+  "displayText": "Tuition Test",
+  "amount": 10000,
+  "tags": ["test"],
+  "collectStudentWise": true,
+  "spansAcademicYears": false,
+  "installments": [
+    { "installmentNo": 1, "description": "Inst 1", "amount": 5000, "dueDate": "2026-06-01" },
+    { "installmentNo": 2, "description": "Inst 2", "amount": 5000, "dueDate": "2026-09-01" }
+  ],
+  "fines": [
+    { "fineNo": 1, "description": "Late", "amount": 100, "overdueByDays": 15 }
+  ],
+  "studentList": ["stu-001"],
+  "courseList": []
+}
+
+### Get fee by id
+GET {{host}}/api/fee/{{feeId}}
+X-Owner-Id: {{owner}}

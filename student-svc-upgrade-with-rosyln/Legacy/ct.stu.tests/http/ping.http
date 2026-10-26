@@ -1,9 +1,0 @@
-@api = http://localhost:5190/api
-@svc = stu
-@accessCode = 00ed8512-2b45-4853-a962-d2423ef61fb1
-@contentType = application/json
-
- ###
-GET {{api}}/{{svc}}/_monitor/ping
-AccessCode: {{accessCode}}
-content-type: {{contentType}}

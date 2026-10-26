@@ -1,0 +1,12 @@
+{
+  "samples": [
+    {
+      "message": "Your exam starts at 10 AM in Hall B.",
+      "recipients": ["9876543210", "9123456780"]
+    },
+    {
+      "message": "Fee reminder: last date 15th of this month.",
+      "recipients": ["9988776655"]
+    }
+  ]
+}

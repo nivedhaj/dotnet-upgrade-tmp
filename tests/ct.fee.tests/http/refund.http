@@ -1,0 +1,20 @@
+### Refund API samples
+@host = https://localhost:5001
+@owner = 0c250000-50bf-11e7-89e2-1cbdb9e7fd04
+
+POST {{host}}/api/fee/refunds
+X-Owner-Id: {{owner}}
+X-User-Id: tester
+Content-Type: application/json
+
+{
+  "studentId": "stu-001",
+  "feeTransactionId": null,
+  "refundDate": "2026-10-26T10:00:00Z",
+  "amount": 500,
+  "reason": "Overpayment",
+  "reference": "RF-001"
+}
+
+GET {{host}}/api/fee/refunds
+X-Owner-Id: {{owner}}

@@ -1,0 +1,21 @@
+@host = https://localhost:5001
+@owner = staff-owner-1
+
+### List staff
+GET {{host}}/api/staff
+X-Owner-Id: {{owner}}
+
+### Create
+POST {{host}}/api/staff
+X-Owner-Id: {{owner}}
+Content-Type: application/json
+
+{
+  "name": "Teacher A",
+  "primaryEmail": "a@example.com",
+  "primaryMobile": "9876543210",
+  "designation": "Teacher",
+  "staffType": "Teaching",
+  "instituteIds": ["INST1"],
+  "subjects": ["Math"]
+}
