@@ -1,0 +1,157 @@
+### Ct.Arte – latest API surface (net10 / EF Core)
+### Base URL (adjust host/port as needed)
+@base = http://localhost:5000
+@owner = test-owner-0001
+@user = test-user-0001
+
+### ---------- Artefact CRUD ----------
+
+### Search / list
+GET {{base}}/api/arte/artefact?search=&skip=0&take=50
+X-Owner-Id: {{owner}}
+X-User-Id: {{user}}
+
+### Get by id
+GET {{base}}/api/arte/artefact/{{artefactId}}
+X-Owner-Id: {{owner}}
+
+### Upsert
+POST {{base}}/api/arte/artefact/upsert
+Content-Type: application/json
+X-Owner-Id: {{owner}}
+X-User-Id: {{user}}
+
+{
+  "title": "Sample Report",
+  "description": "Q1 summary",
+  "fileName": "q1-report.pdf",
+  "mimeType": "application/pdf",
+  "fileSize": 2048,
+  "tags": ["report", "q1"]
+}
+
+### Update
+POST {{base}}/api/arte/artefact/update?id={{artefactId}}
+Content-Type: application/json
+X-Owner-Id: {{owner}}
+
+{
+  "title": "Sample Report (v2)",
+  "description": "Updated"
+}
+
+### Enable / Disable
+POST {{base}}/api/arte/artefact/enable
+Content-Type: application/json
+X-Owner-Id: {{owner}}
+
+{ "id": "{{artefactId}}" }
+
+###
+POST {{base}}/api/arte/artefact/disable
+Content-Type: application/json
+X-Owner-Id: {{owner}}
+
+{ "id": "{{artefactId}}" }
+
+### Publish / Unpublish
+POST {{base}}/api/arte/artefact/publish
+Content-Type: application/json
+X-Owner-Id: {{owner}}
+
+{ "id": "{{artefactId}}" }
+
+###
+POST {{base}}/api/arte/artefact/publishArtefactToPublic
+Content-Type: application/json
+X-Owner-Id: {{owner}}
+
+{ "id": "{{artefactId}}" }
+
+###
+POST {{base}}/api/arte/artefact/unpublishArtefact
+Content-Type: application/json
+X-Owner-Id: {{owner}}
+
+{ "id": "{{artefactId}}" }
+
+### Tags
+POST {{base}}/api/arte/artefact/updateTags
+Content-Type: application/json
+X-Owner-Id: {{owner}}
+
+{ "id": "{{artefactId}}", "tags": ["report", "published"] }
+
+###
+GET {{base}}/api/arte/artefact/tags
+X-Owner-Id: {{owner}}
+
+### Download / content
+GET {{base}}/api/arte/artefact/download?id={{artefactId}}
+X-Owner-Id: {{owner}}
+
+###
+GET {{base}}/api/arte/artefact/getFileContent?id={{artefactId}}
+X-Owner-Id: {{owner}}
+
+### Widgets
+GET {{base}}/api/arte/artefact/widget/artefactCount
+X-Owner-Id: {{owner}}
+
+###
+GET {{base}}/api/arte/artefact/widget/artefactBandwidth
+X-Owner-Id: {{owner}}
+
+###
+GET {{base}}/api/arte/artefact/widget/sizeBuckets
+X-Owner-Id: {{owner}}
+
+### Data templates
+GET {{base}}/api/arte/artefact/dataTemplates?mode=live
+X-Owner-Id: {{owner}}
+
+### Student document
+POST {{base}}/api/arte/artefact/upsertStudentDocument
+Content-Type: application/json
+X-Owner-Id: {{owner}}
+
+{
+  "title": "Applicant Aadhar",
+  "fileName": "aadhar.pdf",
+  "mimeType": "application/pdf"
+}
+
+### ---------- Github ----------
+GET {{base}}/api/arte/github
+X-Owner-Id: {{owner}}
+
+###
+POST {{base}}/api/arte/github/upsert
+Content-Type: application/json
+X-Owner-Id: {{owner}}
+
+{
+  "title": "specs.json",
+  "fileName": "specs.json",
+  "description": "{}"
+}
+
+### ---------- ETL ----------
+POST {{base}}/api/arte/etl/generateStudentEtl
+X-Owner-Id: {{owner}}
+
+###
+POST {{base}}/api/arte/etl/generateInstEtl
+X-Owner-Id: {{owner}}
+
+### ---------- Report ----------
+POST {{base}}/api/arte/report/artefactList
+X-Owner-Id: {{owner}}
+
+### ---------- Anon ----------
+GET {{base}}/api/arte/anon/getFiles?search=
+X-Owner-Id: {{owner}}
+
+###
+GET {{base}}/api/arte/anon/contentTags
+X-Owner-Id: {{owner}}

@@ -1,0 +1,30 @@
+@host = https://localhost:5001
+@owner = sched-owner-1
+
+### Get calendar
+GET {{host}}/api/scheduler/calendar
+X-Owner-Id: {{owner}}
+
+### Add rule
+POST {{host}}/api/scheduler/calendar/rules
+X-Owner-Id: {{owner}}
+Content-Type: application/json
+
+{
+  "title": "Staff Meeting",
+  "cronExpression": "0 9 * * 1",
+  "category": "Event",
+  "weeklyDays": ["Monday"],
+  "duration": 60
+}
+
+### Generate
+POST {{host}}/api/scheduler/calendar/generate
+X-Owner-Id: {{owner}}
+Content-Type: application/json
+
+{
+  "from": "2026-11-01",
+  "to": "2026-11-30",
+  "weeklyHolidays": ["Sunday"]
+}

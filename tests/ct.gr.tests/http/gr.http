@@ -1,0 +1,55 @@
+### GR Receipt API samples
+@host = https://localhost:5001
+@owner = 0c250000-50bf-11e7-89e2-1cbdb9e7fd04
+
+### List receipts
+GET {{host}}/api/gr/receipts?page=1&pageSize=20
+X-Owner-Id: {{owner}}
+X-User-Id: tester
+
+### Create receipt
+POST {{host}}/api/gr/receipts
+X-Owner-Id: {{owner}}
+X-User-Id: tester
+Content-Type: application/json
+
+{
+  "date": "2026-10-26",
+  "paymentMode": "Cash",
+  "receiptType": "Regular",
+  "receivedBy": "Cashier",
+  "customer": {
+    "name": "Parent A",
+    "contact": "9876543210",
+    "studyingIn": "I",
+    "section": "A",
+    "customerType": "Student"
+  },
+  "orderItems": [
+    { "particular": "Tuition", "amount": 1500, "extras": { "term": "1" } }
+  ]
+}
+
+### Get by id
+GET {{host}}/api/gr/receipts/{{receiptId}}
+X-Owner-Id: {{owner}}
+
+### Print
+POST {{host}}/api/gr/receipts/{{receiptId}}/print
+X-Owner-Id: {{owner}}
+
+### Cancel
+POST {{host}}/api/gr/receipts/{{receiptId}}/cancel
+X-Owner-Id: {{owner}}
+
+### Report summary
+POST {{host}}/api/gr/reports/summary
+X-Owner-Id: {{owner}}
+Content-Type: application/json
+
+{
+  "from": "2026-09-01",
+  "to": "2026-10-31",
+  "page": 1,
+  "pageSize": 50
+}

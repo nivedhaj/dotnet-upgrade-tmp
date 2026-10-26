@@ -1,0 +1,2 @@
+@host = https://localhost:5001
+GET {{host}}/api/stu/students?page=1&pageSize=1

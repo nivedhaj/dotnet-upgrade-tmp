@@ -1,0 +1,29 @@
+### Student API samples
+@host = https://localhost:5001
+@inst = demo-inst
+
+### Search
+GET {{host}}/api/stu/students?search=Alice&page=1&pageSize=20
+X-Inst-Id: {{inst}}
+
+### Create
+POST {{host}}/api/stu/students
+Content-Type: application/json
+X-Inst-Id: {{inst}}
+
+{
+  "name": "Alice",
+  "gender": "Female",
+  "mobile": "9876543210",
+  "email": "alice@example.com",
+  "instId": "{{inst}}",
+  "courseId": "C1",
+  "courseName": "Class I",
+  "secName": "A"
+}
+
+### Get by id
+GET {{host}}/api/stu/students/{{studentId}}
+
+### Sectionwise report
+GET {{host}}/api/stu/report/sectionwise?instId={{inst}}

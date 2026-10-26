@@ -1,5 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
-  <PropertyGroup><TargetFramework>net10.0</TargetFramework><Nullable>enable</Nullable><ImplicitUsings>enable</ImplicitUsings><LangVersion>preview</LangVersion></PropertyGroup>
-  <ItemGroup><ProjectReference Include="../StudentMigration.Postgres/StudentMigration.Postgres.csproj" /></ItemGroup>
-  <ItemGroup><PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.0"><PrivateAssets>all</PrivateAssets></PackageReference><PackageReference Include="Swashbuckle.AspNetCore" Version="10.0.1" /></ItemGroup>
-</Project>

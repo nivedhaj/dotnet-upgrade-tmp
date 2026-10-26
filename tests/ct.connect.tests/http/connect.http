@@ -1,0 +1,57 @@
+### Connect module HTTP samples (for local debugging against a running host)
+
+@host = https://localhost:5001
+@inst = 1a6a5000-1920-45ec-9500-f37f54f82d5f
+
+### SMS sent (paged)
+GET {{host}}/api/connect/sms/sent?page=1&pageSize=20
+X-Inst-Id: {{inst}}
+
+### Email sent
+GET {{host}}/api/connect/email/sent?page=1&pageSize=20
+X-Inst-Id: {{inst}}
+
+### Send SMS (RecipientPostData shape)
+POST {{host}}/api/connect/sms
+X-Inst-Id: {{inst}}
+Content-Type: application/json
+
+{
+  "text": "Hello from connect tests",
+  "smsRefId": "http-test-1",
+  "recipients": {
+    "manual": ["9876543210"]
+  }
+}
+
+### Send Email
+POST {{host}}/api/connect/email
+X-Inst-Id: {{inst}}
+Content-Type: application/json
+
+{
+  "type": "generic",
+  "from": "noreply@test.local",
+  "subject": "Test email",
+  "html": "<p>Hello</p>",
+  "to": ["student@example.com"]
+}
+
+### Contact lookup
+POST {{host}}/api/connect/lookup
+X-Inst-Id: {{inst}}
+Content-Type: application/json
+
+{
+  "contacts": ["9876543210", "person@example.com"]
+}
+
+### Request SMS template approval
+POST {{host}}/api/connect/requestApproval
+X-Inst-Id: {{inst}}
+Content-Type: application/json
+
+{
+  "message": "Exam starts at 10 AM",
+  "approve": false
+}

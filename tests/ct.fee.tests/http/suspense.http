@@ -1,0 +1,19 @@
+### Suspense account API samples
+@host = https://localhost:5001
+@owner = 0c250000-50bf-11e7-89e2-1cbdb9e7fd04
+
+POST {{host}}/api/fee/suspense
+X-Owner-Id: {{owner}}
+X-User-Id: tester
+Content-Type: application/json
+
+{
+  "transactionDate": "2026-10-26T10:00:00Z",
+  "amount": 1500,
+  "paymentMode": "NEFT",
+  "particulars": "Unknown payer",
+  "reference": "UTR-1"
+}
+
+GET {{host}}/api/fee/suspense
+X-Owner-Id: {{owner}}

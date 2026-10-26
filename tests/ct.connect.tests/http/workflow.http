@@ -1,0 +1,27 @@
+### Workflow API samples
+
+@host = https://localhost:5001
+@inst = 0c250000-50bf-11e7-89e2-1cbdb9e7fd04
+
+### Init email_generic
+GET {{host}}/api/connect/workflow/init?title=email_generic
+X-Inst-Id: {{inst}}
+
+### Init sms_generic
+GET {{host}}/api/connect/workflow/init?title=sms_generic
+X-Inst-Id: {{inst}}
+
+### Index
+GET {{host}}/api/connect/workflow
+X-Inst-Id: {{inst}}
+
+### Push workflow payload
+POST {{host}}/api/connect/workflow
+X-Inst-Id: {{inst}}
+Content-Type: application/json
+
+{
+  "title": "email_generic",
+  "step": 1,
+  "payload": {}
+}

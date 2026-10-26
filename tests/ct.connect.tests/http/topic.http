@@ -1,0 +1,73 @@
+### Topic API samples
+
+@host = https://localhost:5001
+@inst = 0c250000-2021-11e7-89e2-1cbdb9e7fd04
+
+### List topics
+GET {{host}}/api/connect/topic?activeOnly=true
+X-Inst-Id: {{inst}}
+
+### Main topics
+GET {{host}}/api/connect/topic/mainTopics
+X-Inst-Id: {{inst}}
+
+### Handles
+GET {{host}}/api/connect/topic/handles
+X-Inst-Id: {{inst}}
+
+### Create topics
+POST {{host}}/api/connect/topic
+X-Inst-Id: {{inst}}
+Content-Type: application/json
+
+[
+  {
+    "name": "attendance.daily",
+    "friendlyName": "Daily Attendance",
+    "description": "Attendance alerts",
+    "role": "Member",
+    "category": "PrivateToInstitute",
+    "access": "Open",
+    "canUnsubscribe": true,
+    "isSubscriptionAllowed": true,
+    "tags": ["attendance"]
+  }
+]
+
+### Create main topic
+POST {{host}}/api/connect/topic/mainTopic
+X-Inst-Id: {{inst}}
+Content-Type: application/json
+
+{
+  "name": "academic",
+  "friendlyName": "Academic"
+}
+
+### Enable
+POST {{host}}/api/connect/topic/enable
+X-Inst-Id: {{inst}}
+Content-Type: application/json
+
+{ "id": "TOPIC_ID_HERE" }
+
+### Disable
+POST {{host}}/api/connect/topic/disable
+X-Inst-Id: {{inst}}
+Content-Type: application/json
+
+{ "id": "TOPIC_ID_HERE" }
+
+### Update friendly name
+POST {{host}}/api/connect/topic/updateFriendlyName
+X-Inst-Id: {{inst}}
+Content-Type: application/json
+
+{ "id": "TOPIC_ID_HERE", "value": "New Friendly Name" }
+
+### Update handle
+POST {{host}}/api/connect/topic/handle
+X-Inst-Id: {{inst}}
+Content-Type: application/json
+
+{ "id": "TOPIC_ID_HERE", "handle": "attendance.daily.main" }

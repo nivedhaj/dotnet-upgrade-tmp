@@ -1,5 +1,0 @@
-<Solution>
-  <Project Path="src/StudentMigration.Api/StudentMigration.Api.csproj" />
-  <Project Path="src/StudentMigration.Postgres/StudentMigration.Postgres.csproj" />
-  <Project Path="src/StudentMigration.Roslyn/StudentMigration.Roslyn.csproj" />
-</Solution>
